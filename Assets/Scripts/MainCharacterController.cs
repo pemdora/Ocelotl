@@ -12,7 +12,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class MainCharacterController : MonoBehaviour {
 
-    private float walkSpeed = 10f;
+    public float walkSpeed = 10f;
     private bool mouseLock;
     private NavMeshAgent agent;
 
@@ -34,8 +34,6 @@ public class MainCharacterController : MonoBehaviour {
     // Get input and translate character 
     private void Move()
     {
-        float step = walkSpeed;
-
         if (Input.GetKeyDown(KeyCode.DownArrow)|| Input.GetKeyDown(KeyCode.S))
         {
             Vector3 targetPosition = this.transform.position + Vector3.back;
@@ -78,6 +76,18 @@ public class MainCharacterController : MonoBehaviour {
             this.transform.rotation = Quaternion.Euler(0f, rotation.y, 0f); // will just aim in the (x,z) plan
         }
     }
+
+    /*
+    public void CalculatePath(Vector3 target)
+    {
+        NavMeshPath path = new NavMeshPath();
+        agent.CalculatePath(target, path);
+        if (path.status == NavMeshPathStatus.PathInvalid)
+        {
+            Debug.Log("no");
+        }
+    }*/
+
     // Show the cursor
     private void ShowMouse()
     {
