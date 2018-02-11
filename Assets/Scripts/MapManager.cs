@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Class responsible for Map controlls :
+/// </summary>
 public class MapManager : MonoBehaviour {
 
     [Header("Maps variables")]
@@ -12,7 +15,24 @@ public class MapManager : MonoBehaviour {
     public Transform map2; // TileList
     private Transform[] tilesMap2;
     private bool map2active;
-    
+
+    public Transform[] tilesMap;
+
+    public static MapManager mapInstance;
+    //SINGLETON
+    void Awake()
+    {
+        if (mapInstance != null)
+        {
+            Debug.LogError("More than one Map Manager in scene");
+            return;
+        }
+        else
+        {
+            mapInstance = this;
+        }
+    }
+
     // Use this for initialization
     void Start () {
 
@@ -21,12 +41,22 @@ public class MapManager : MonoBehaviour {
         for (int i = 0; i < tilesMap1.Length; i++)
         {
             tilesMap1[i] = map1.GetChild(i);
+            Debug.Log("oui");
+        }
+
+        // Get child elements from map object
+        tilesMap2 = new Transform[map2.childCount];
+        for (int i = 0; i < tilesMap2.Length; i++)
+        {
+            tilesMap2[i] = map2.GetChild(i);
+            Debug.Log("ok");
         }
 
         map1active = true;
         map2active = false;
         map1.gameObject.SetActive(map1active);
         map2.gameObject.SetActive(map2active);
+        tilesMap = tilesMap1;
     }
 	
 	// Update is called once per frame
@@ -37,6 +67,28 @@ public class MapManager : MonoBehaviour {
             map2active = !map2active;
             map1.gameObject.SetActive(map1active);
             map2.gameObject.SetActive(map2active);
+            if (map1.gameObject.activeInHierarchy)
+                tilesMap = tilesMap1;
+            else
+                tilesMap = tilesMap2;
+
         }
 	}
+
+    public bool GetWall(float x, float z)
+    {
+        foreach (Transform go in tilesMap)
+        {
+            TileBlock tile = go.GetComponent<TileBlock>();
+            if (tile!= null)
+            {
+                if(tile.x == x && tile.z == z)
+                {
+                    Debug.Log("MUR");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

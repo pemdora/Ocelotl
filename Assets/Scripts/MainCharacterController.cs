@@ -10,11 +10,16 @@ using UnityEngine.AI;
 /// </summary>
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class MainCharacterController : MonoBehaviour {
+public class MainCharacterController : MonoBehaviour
+{
 
     public float walkSpeed = 10f;
     private bool mouseLock;
     private NavMeshAgent agent;
+    public Transform sph;
+    public Transform sph2;
+    public Vector3 characterPos;
+    public Vector3 targetPosition;
 
     // Use this for initialization
     void Start()
@@ -23,45 +28,45 @@ public class MainCharacterController : MonoBehaviour {
         Cursor.lockState = CursorLockMode.Locked;
         mouseLock = true;
         agent = GetComponent<NavMeshAgent>();
+        characterPos = this.transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
         Move();
+        ShowMouse();
     }
 
     // Get input and translate character 
     private void Move()
     {
-        if (Input.GetKeyDown(KeyCode.DownArrow)|| Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
-            Vector3 targetPosition = this.transform.position + Vector3.back;
+            targetPosition = characterPos +  Vector3.back;
             LookAt(targetPosition);
-            // Moving
-            agent.SetDestination(targetPosition);
+            MoveFoward(targetPosition);
         }
-        else if(Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Z))  // else if because we cannot move in both Vertical et Horizontal axis 
+        else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Z))  // else if because we cannot move in both Vertical et Horizontal axis 
         {
-            Vector3 targetPosition = this.transform.position + Vector3.forward;
+            targetPosition = characterPos + Vector3.forward;
             LookAt(targetPosition);
-            // Moving
-            agent.SetDestination(targetPosition);
+            MoveFoward(targetPosition);
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.Q))
         {
-            Vector3 targetPosition = this.transform.position + Vector3.left;
+            targetPosition = characterPos + Vector3.left;
             LookAt(targetPosition);
-            // Moving
-            agent.SetDestination(targetPosition);
+            MoveFoward(targetPosition);
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
-            Vector3 targetPosition = this.transform.position + Vector3.right;
+            targetPosition = characterPos + Vector3.right;
             LookAt(targetPosition);
-            // Moving
-            agent.SetDestination(targetPosition);
+            MoveFoward(targetPosition);
         }
+        this.sph.position = transform.position;
+        this.sph2.position = targetPosition;
     }
 
     public void LookAt(Vector3 positionToLookAt)
@@ -72,21 +77,60 @@ public class MainCharacterController : MonoBehaviour {
         if (direction != Vector3.zero)
         {
             Quaternion lookRotation = Quaternion.LookRotation(direction); // mathematical way to deal with rotation
-            Vector3 rotation = Quaternion.Lerp(this.transform.rotation, lookRotation,10f).eulerAngles;
+            Vector3 rotation = Quaternion.Lerp(this.transform.rotation, lookRotation, 10f).eulerAngles;
             this.transform.rotation = Quaternion.Euler(0f, rotation.y, 0f); // will just aim in the (x,z) plan
         }
     }
 
-    /*
-    public void CalculatePath(Vector3 target)
+    public void MoveFoward(Vector3 targetPosition)
+    {
+        bool col = NoCollision(targetPosition);
+        if (CalculatePath(targetPosition) && col)
+        {
+            // Moving
+            characterPos = targetPosition;
+            agent.SetDestination(targetPosition);
+
+        }
+    }
+
+    public bool CalculatePath(Vector3 target)
     {
         NavMeshPath path = new NavMeshPath();
         agent.CalculatePath(target, path);
         if (path.status == NavMeshPathStatus.PathInvalid)
         {
             Debug.Log("no");
+            return false;
         }
-    }*/
+        else
+        {
+            return true;
+        }
+    }
+
+    public bool NoCollision(Vector3 direction)
+    {
+        Debug.Log(direction.x);
+        Debug.Log(direction.z);
+        if (MapManager.mapInstance.GetWall(direction.x, direction.z))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    void OnCollisionEnter(Collision col)
+    {
+        if (col.gameObject.tag == "Wall")
+        {
+            Debug.Log("Collision detected");
+            // Destroy(col.gameObject);
+        }
+    }
 
     // Show the cursor
     private void ShowMouse()
