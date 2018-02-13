@@ -41,7 +41,6 @@ public class MapManager : MonoBehaviour {
         for (int i = 0; i < tilesMap1.Length; i++)
         {
             tilesMap1[i] = map1.GetChild(i);
-            Debug.Log("oui");
         }
 
         // Get child elements from map object
@@ -49,7 +48,6 @@ public class MapManager : MonoBehaviour {
         for (int i = 0; i < tilesMap2.Length; i++)
         {
             tilesMap2[i] = map2.GetChild(i);
-            Debug.Log("ok");
         }
 
         map1active = true;
@@ -84,7 +82,6 @@ public class MapManager : MonoBehaviour {
             {
                 if(tile.x == x && tile.z == z)
                 {
-                    Debug.Log("MUR");
                     return true;
                 }
             }

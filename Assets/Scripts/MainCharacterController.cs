@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Class responsible for main character controlls :
@@ -13,13 +14,14 @@ using UnityEngine.AI;
 public class MainCharacterController : MonoBehaviour
 {
 
-    public float walkSpeed = 10f;
     private bool mouseLock;
     private NavMeshAgent agent;
-    public Transform sph;
-    public Transform sph2;
+    public Vector3 start;
     public Vector3 characterPos;
     public Vector3 targetPosition;
+    private float speed;
+    private bool move;
+    
 
     // Use this for initialization
     void Start()
@@ -28,22 +30,41 @@ public class MainCharacterController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         mouseLock = true;
         agent = GetComponent<NavMeshAgent>();
+        start = this.transform.position;
         characterPos = this.transform.position;
+        targetPosition = this.transform.position;
+        move = false;
+        speed = 1f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Move();
+        if (move)
+        {
+            if (Vector3.Distance(targetPosition,transform.position)<0.34f)
+            {
+                move = false;
+                characterPos = targetPosition;
+            }
+            else
+            {
+                transform.position = Vector3.MoveTowards(transform.position,targetPosition,speed*Time.deltaTime);
+            }
+        }
+        else
+        {
+            GetMovementInput();
+        }
         ShowMouse();
     }
 
     // Get input and translate character 
-    private void Move()
+    private void GetMovementInput()
     {
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
-            targetPosition = characterPos +  Vector3.back;
+            targetPosition = characterPos + Vector3.back;
             LookAt(targetPosition);
             MoveFoward(targetPosition);
         }
@@ -65,13 +86,11 @@ public class MainCharacterController : MonoBehaviour
             LookAt(targetPosition);
             MoveFoward(targetPosition);
         }
-        this.sph.position = transform.position;
-        this.sph2.position = targetPosition;
     }
 
     public void LookAt(Vector3 positionToLookAt)
     {
-        Vector3 direction = positionToLookAt - this.transform.position;
+        Vector3 direction = positionToLookAt - characterPos;
         direction.y = 0;
 
         if (direction != Vector3.zero)
@@ -84,13 +103,11 @@ public class MainCharacterController : MonoBehaviour
 
     public void MoveFoward(Vector3 targetPosition)
     {
-        bool col = NoCollision(targetPosition);
-        if (CalculatePath(targetPosition) && col)
+        if (CalculatePath(targetPosition) && NoCollision(targetPosition))
         {
+            Debug.Log("move");
             // Moving
-            characterPos = targetPosition;
-            agent.SetDestination(targetPosition);
-
+            move = true;
         }
     }
 
@@ -101,6 +118,7 @@ public class MainCharacterController : MonoBehaviour
         if (path.status == NavMeshPathStatus.PathInvalid)
         {
             Debug.Log("no");
+            move = false;
             return false;
         }
         else
@@ -111,10 +129,9 @@ public class MainCharacterController : MonoBehaviour
 
     public bool NoCollision(Vector3 direction)
     {
-        Debug.Log(direction.x);
-        Debug.Log(direction.z);
         if (MapManager.mapInstance.GetWall(direction.x, direction.z))
         {
+            move = false;
             return false;
         }
         else
@@ -128,6 +145,7 @@ public class MainCharacterController : MonoBehaviour
         if (col.gameObject.tag == "Wall")
         {
             Debug.Log("Collision detected");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             // Destroy(col.gameObject);
         }
     }
