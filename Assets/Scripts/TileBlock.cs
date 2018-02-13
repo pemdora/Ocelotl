@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class TileBlock : MonoBehaviour
 {
+    [Header("Tile variables")]
     public float x;
     public float z;
-
-    // Use this for initialization
+    
+    /// <summary>
+    /// Initialize variables
+    /// </summary>
     void Start()
     {
         this.x = this.transform.position.x;

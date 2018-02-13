@@ -16,40 +16,51 @@ public class MainCharacterController : MonoBehaviour
 
     private bool mouseLock;
     private NavMeshAgent agent;
-    public Vector3 start;
-    public Vector3 characterPos;
-    public Vector3 targetPosition;
-    private float speed;
-    private bool move;
-    
 
-    // Use this for initialization
-    void Start()
+    #region PositionVariables
+    private Vector3 start;
+    private Vector3 characterPos;
+    private Vector3 targetPosition;
+    #endregion
+
+    #region AnimationVariables
+    private float speed;
+    private Animator animator;
+    #endregion
+
+    /// <summary>
+    /// Initialize variables
+    /// </summary>
+    private void Start()
     {
-        // Hide the cursor to begin with
-        Cursor.lockState = CursorLockMode.Locked;
-        mouseLock = true;
         agent = GetComponent<NavMeshAgent>();
+
+        Cursor.lockState = CursorLockMode.Locked; // Hide the cursor to begin with
+        mouseLock = true;
+
         start = this.transform.position;
-        characterPos = this.transform.position;
+        characterPos = this.transform.position; // since player position is not 100% accurate, we generate an accurate variable position
         targetPosition = this.transform.position;
-        move = false;
+
         speed = 1f;
+        animator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
-    void Update()
+    /// <summary>
+    /// Check player inputs and move player or display mouse
+    /// </summary>
+    private void Update()
     {
-        if (move)
+        if (animator.GetBool("isWalking")) // if the player is moving
         {
-            if (Vector3.Distance(targetPosition,transform.position)<0.34f)
+            if (Vector3.Distance(targetPosition,transform.position)<0.34f) // check character's position with mathematical aproximation
             {
-                move = false;
-                characterPos = targetPosition;
+                animator.SetBool("isWalking", false); // set walking animation
+                characterPos = targetPosition; // update characterPos
             }
             else
             {
-                transform.position = Vector3.MoveTowards(transform.position,targetPosition,speed*Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position,targetPosition,speed*Time.deltaTime); // translate
             }
         }
         else
@@ -58,37 +69,42 @@ public class MainCharacterController : MonoBehaviour
         }
         ShowMouse();
     }
-
-    // Get input and translate character 
+    
+    /// <summary>
+    /// Get input and translate character 
+    /// </summary>
     private void GetMovementInput()
     {
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
             targetPosition = characterPos + Vector3.back;
             LookAt(targetPosition);
-            MoveFoward(targetPosition);
+            CanMoveFoward(targetPosition);
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Z))  // else if because we cannot move in both Vertical et Horizontal axis 
         {
             targetPosition = characterPos + Vector3.forward;
             LookAt(targetPosition);
-            MoveFoward(targetPosition);
+            CanMoveFoward(targetPosition);
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.Q))
         {
             targetPosition = characterPos + Vector3.left;
             LookAt(targetPosition);
-            MoveFoward(targetPosition);
+            CanMoveFoward(targetPosition);
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
             targetPosition = characterPos + Vector3.right;
             LookAt(targetPosition);
-            MoveFoward(targetPosition);
+            CanMoveFoward(targetPosition);
         }
     }
 
-    public void LookAt(Vector3 positionToLookAt)
+    /// <summary>
+    /// Rotate the character towards the direction to look at
+    /// </summary>
+    private void LookAt(Vector3 positionToLookAt)
     {
         Vector3 direction = positionToLookAt - characterPos;
         direction.y = 0;
@@ -101,24 +117,30 @@ public class MainCharacterController : MonoBehaviour
         }
     }
 
-    public void MoveFoward(Vector3 targetPosition)
+    /// <summary>
+    /// Chack if the character can move to a given direction 
+    /// </summary>
+    private void CanMoveFoward(Vector3 targetPosition)
     {
         if (CalculatePath(targetPosition) && NoCollision(targetPosition))
         {
-            Debug.Log("move");
             // Moving
-            move = true;
+            animator.SetBool("isWalking", true);
         }
     }
-
-    public bool CalculatePath(Vector3 target)
+    
+    /// <summary>
+    /// Chack if the targeted position is walkable (a tile exist)
+    /// </summary>
+    /// <param name = target > Vector3 targeted tile position.</param>
+    /// <returns>Return either true if a walkable tile exist with the given postion or false if not</returns>
+    private bool CalculatePath(Vector3 target)
     {
         NavMeshPath path = new NavMeshPath();
         agent.CalculatePath(target, path);
         if (path.status == NavMeshPathStatus.PathInvalid)
         {
             Debug.Log("no");
-            move = false;
             return false;
         }
         else
@@ -127,11 +149,15 @@ public class MainCharacterController : MonoBehaviour
         }
     }
 
-    public bool NoCollision(Vector3 direction)
+    /// <summary>
+    /// Chack if the targeted position is walkable (a wall doesn't exist)
+    /// </summary>
+    /// <param name = direction > Vector3 targeted wall position.</param>
+    /// <returns>Return either false if a wall tile exist with the given postion or true if not</returns>
+    private bool NoCollision(Vector3 direction)
     {
         if (MapManager.mapInstance.GetWall(direction.x, direction.z))
         {
-            move = false;
             return false;
         }
         else
@@ -140,7 +166,12 @@ public class MainCharacterController : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision col)
+    /// <summary>
+    /// Chack if a colision with a Wall occured with character
+    /// </summary>
+    /// <param name = direction > Vector3 targeted wall position.</param>
+    /// <returns>Return either false if a wall tile exist with the given postion or true if not</returns>
+    private void OnCollisionEnter(Collision col)
     {
         if (col.gameObject.tag == "Wall")
         {
@@ -150,7 +181,9 @@ public class MainCharacterController : MonoBehaviour
         }
     }
 
-    // Show the cursor
+    /// <summary>
+    /// Show/hide mouse cursor
+    /// </summary>
     private void ShowMouse()
     {
         if (Input.GetMouseButtonDown(1)) // Right click down
@@ -166,4 +199,5 @@ public class MainCharacterController : MonoBehaviour
             }
         }
     }
+
 }

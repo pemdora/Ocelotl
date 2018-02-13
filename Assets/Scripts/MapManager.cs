@@ -8,19 +8,27 @@ using UnityEngine;
 public class MapManager : MonoBehaviour {
 
     [Header("Maps variables")]
+    #region map1
     public Transform map1; // TileList
     private Transform[] tilesMap1;
     private bool map1active;
+    #endregion
 
+    #region map2
     public Transform map2; // TileList
     private Transform[] tilesMap2;
     private bool map2active;
+    #endregion
 
+    // Active map
     public Transform[] tilesMap;
 
     public static MapManager mapInstance;
     //SINGLETON
-    void Awake()
+    /// <summary>
+    /// Initialize singleton instance
+    /// </summary>
+    private void Awake()
     {
         if (mapInstance != null)
         {
@@ -33,8 +41,10 @@ public class MapManager : MonoBehaviour {
         }
     }
 
-    // Use this for initialization
-    void Start () {
+    /// <summary>
+    /// Initialize variables
+    /// </summary>
+    private void Start () {
 
         // Get child elements from map object
         tilesMap1 = new Transform[map1.childCount];
@@ -56,9 +66,11 @@ public class MapManager : MonoBehaviour {
         map2.gameObject.SetActive(map2active);
         tilesMap = tilesMap1;
     }
-	
-	// Update is called once per frame
-	void Update () {
+    
+    /// <summary>
+    /// Get User input for switching Map
+    /// </summary>
+    private void Update () {
         if (Input.GetKeyDown(KeyCode.Space))
         {
             map1active = !map1active;
@@ -69,10 +81,15 @@ public class MapManager : MonoBehaviour {
                 tilesMap = tilesMap1;
             else
                 tilesMap = tilesMap2;
-
         }
 	}
 
+    /// <summary>
+    /// Chack if a wall exists in the active map with a given "x" and "y" position
+    /// </summary>
+    /// <param name = x > float position in X axis.</param>
+    /// <param name = y > float position in Z axis.</param>
+    /// <returns>Return true if a wall with the given X and Z postion or false if not</returns>
     public bool GetWall(float x, float z)
     {
         foreach (Transform go in tilesMap)
