@@ -71,7 +71,7 @@ public class MapManager : MonoBehaviour {
     /// Get User input for switching Map
     /// </summary>
     private void Update () {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space)&&!MainCharacterController.characterController.animator.GetBool("isWalking")) // if the player is not moving
         {
             map1active = !map1active;
             map2active = !map2active;

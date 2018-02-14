@@ -18,15 +18,32 @@ public class MainCharacterController : MonoBehaviour
     private NavMeshAgent agent;
 
     #region PositionVariables
-    private Vector3 start;
     private Vector3 characterPos;
     private Vector3 targetPosition;
     #endregion
 
     #region AnimationVariables
     private float speed;
-    private Animator animator;
+    public Animator animator;
     #endregion
+
+    public static MainCharacterController characterController;
+    //SINGLETON
+    /// <summary>
+    /// Initialize singleton instance
+    /// </summary>
+    private void Awake()
+    {
+        if (characterController != null)
+        {
+            Debug.LogError("More than one Player in scene");
+            return;
+        }
+        else
+        {
+            characterController = this;
+        }
+    }
 
     /// <summary>
     /// Initialize variables
@@ -37,8 +54,7 @@ public class MainCharacterController : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked; // Hide the cursor to begin with
         mouseLock = true;
-
-        start = this.transform.position;
+        
         characterPos = this.transform.position; // since player position is not 100% accurate, we generate an accurate variable position
         targetPosition = this.transform.position;
 
