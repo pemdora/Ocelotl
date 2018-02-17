@@ -10,15 +10,37 @@ public class MapManager : MonoBehaviour
 
     [Header("Maps variables")]
     // Active map
-    public Transform[] tilesMap;
+    private List<Transform> tilesMap;
+    public GameObject wall;
     #region map1
     public Transform map1; // TileList
-    private Transform[] tilesMap1;
+    private List<Transform> tilesMap1;
+    // Array map (lighter than storing with list of game objects)
+    public int[,] map1Array = new int[8, 8] { // map of 8 line and 8 colums
+        { 0, 0, 1, 1, 0, 0, 1, 0 },
+        { 0, 1, 0, 0, 1, 1, 0, 0 },
+        { 1, 1, 1, 0, 0, 1, 0, 1 },
+        { 0, 1, 0, 1, 1, 1, 0, 0 },
+        { 0, 1, 0, 0, 0, 0, 0, 1 },
+        { 1, 1, 1, 0, 1, 1, 1, 1 },
+        { 0, 0, 1, 0, 0, 0, 0, 1 },
+        { 1, 0, 1, 0, 0, 1, 1, 0 }
+    };
+    public int[,] map2Array = new int[8, 8] { // map of 8 line and 8 colums
+        { 0, 0, 0, 1, 1, 0, 1, 0 },
+        { 0, 1, 0, 1, 0, 1, 1, 1 },
+        { 1, 0, 1, 0, 1, 0, 1, 0 },
+        { 0, 1, 1, 0, 0, 0, 1, 0 },
+        { 0, 0, 1, 0, 1, 1, 1, 1 },
+        { 0, 0, 0, 1, 0, 0, 1, 0 },
+        { 0, 1, 1, 1, 1, 1, 0, 1 },
+        { 0, 1, 0, 0, 0, 1, 0, 0 }
+    };
     private bool map1active;
     #endregion
     #region map2
     public Transform map2; // TileList
-    private Transform[] tilesMap2;
+    private List<Transform> tilesMap2;
     private bool map2active;
     #endregion
     private bool mapSwap;
@@ -47,19 +69,39 @@ public class MapManager : MonoBehaviour
     /// </summary>
     private void Start()
     {
-
+        tilesMap1 = new List<Transform>();
         // Get child elements from map object
-        tilesMap1 = new Transform[map1.childCount];
-        for (int i = 0; i < tilesMap1.Length; i++)
+        for (int i = 0; i < map1Array.GetLength(0); i++)
         {
-            tilesMap1[i] = map1.GetChild(i);
+            for (int j = 0; j < map1Array.GetLength(1); j++)
+            {
+                if (map1Array[i, j] == 1)
+                {
+                    Vector3 position = new Vector3(i, 0, j);
+                    // Instantiate the wall, set its position
+                    GameObject wallObj = (GameObject)Instantiate(this.wall);
+                    wallObj.transform.position = position;
+                    wallObj.transform.parent = map1.transform;
+                    tilesMap1.Add(wallObj.transform);
+                }
+            }
         }
 
-        // Get child elements from map object
-        tilesMap2 = new Transform[map2.childCount];
-        for (int i = 0; i < tilesMap2.Length; i++)
+        tilesMap2 = new List<Transform>();
+        for (int i = 0; i < map2Array.GetLength(0); i++)
         {
-            tilesMap2[i] = map2.GetChild(i);
+            for (int j = 0; j < map2Array.GetLength(1); j++)
+            {
+                if (map2Array[i, j] == 1)
+                {
+                    Vector3 position = new Vector3(i, 0, j);
+                    // Instantiate the wall, set its position
+                    GameObject wallObj = (GameObject)Instantiate(this.wall);
+                    wallObj.transform.position = position;
+                    wallObj.transform.parent = map2.transform;
+                    tilesMap2.Add(wallObj.transform);
+                }
+            }
         }
 
         map1active = true;
@@ -76,7 +118,7 @@ public class MapManager : MonoBehaviour
     private void Update()
     {
         // if the player press "Space" and is not moving and not swaping maps
-        if (Input.GetKeyDown(KeyCode.Space) && !MainCharacterController.characterController.animator.GetBool("isWalking") && mapSwap) 
+        if (Input.GetKeyDown(KeyCode.Space) && !MainCharacterController.characterController.animator.GetBool("isWalking") && mapSwap)
         {
             IEnumerator coroutine = SwapMaps();
             StartCoroutine(coroutine);
