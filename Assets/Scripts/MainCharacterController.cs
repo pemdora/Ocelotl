@@ -55,9 +55,7 @@ public class MainCharacterController : MonoBehaviour
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-
-        Cursor.lockState = CursorLockMode.Locked; // Hide the cursor to begin with
-        mouseLock = true;
+        mouseLock = false;
         
         characterPos = this.transform.position; // since player position is not 100% accurate, we generate an accurate variable position
         targetPosition = this.transform.position;
@@ -195,7 +193,6 @@ public class MainCharacterController : MonoBehaviour
     {
         if (col.gameObject.tag == "Wall")
         {
-            Debug.Log("Collision detected");
             if (OnWallCollision != null)
                 OnWallCollision();
         }
@@ -209,14 +206,14 @@ public class MainCharacterController : MonoBehaviour
         if (Input.GetMouseButtonDown(1)) // Right click down
         {
             mouseLock = !mouseLock;
-            if (mouseLock)
-            {
-                Cursor.lockState = CursorLockMode.None;
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-            }
+        }
+        if (mouseLock)
+        {
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.visible = false;
         }
     }
 
