@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Class responsible for main character controlls :
@@ -25,6 +24,11 @@ public class MainCharacterController : MonoBehaviour
     #region AnimationVariables
     private float speed;
     public Animator animator;
+    #endregion
+
+    #region Event
+    public delegate void WallCollision(); // delegate type is similar to a method signature,  similar to function pointers in C++
+    public static event WallCollision OnWallCollision; // event variable attached to delegate function, static so that it can be called outside of our class
     #endregion
 
     public static MainCharacterController characterController;
@@ -192,8 +196,8 @@ public class MainCharacterController : MonoBehaviour
         if (col.gameObject.tag == "Wall")
         {
             Debug.Log("Collision detected");
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            // Destroy(col.gameObject);
+            if (OnWallCollision != null)
+                OnWallCollision();
         }
     }
 
