@@ -19,6 +19,9 @@ public class GameMaster : MonoBehaviour {
     public TextMeshProUGUI timeFinish;
     public GameObject finishUI;
 
+    public static bool audioBegin = false;
+    public GameObject audioMusic;
+
     public static GameMaster gameMasterinstance;
     //SINGLETON
     /// <summary>
@@ -30,12 +33,22 @@ public class GameMaster : MonoBehaviour {
         Debug.Log("Start Time"+(Time.time - elapsedTime));
         if (gameMasterinstance != null)
         {
-            Debug.LogError("More than one Player in scene");
+            Debug.LogError("More than one gameMasterinstance in scene");
             return;
         }
         else
         {
             gameMasterinstance = this;
+            if (!audioBegin)
+            {
+                audioMusic.GetComponent<AudioSource>().Play();
+                DontDestroyOnLoad(audioMusic); // We keep one instance for music that should never be destroyed
+                GameMaster.audioBegin = true;
+            }
+            else
+            {
+                Destroy(this.audioMusic); // destroy new music instance that is creating when reloading scene
+            }
         }
     }
 
@@ -98,4 +111,13 @@ public class GameMaster : MonoBehaviour {
         GameMaster.retry = false;
         #endregion
     }
+    
+    /* STOP audio
+     * 
+     * if(condition)
+     {
+         audio.Stop();
+         AudioBegin = false;
+     }
+     */
 }
