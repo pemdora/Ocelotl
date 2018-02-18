@@ -9,9 +9,7 @@ public class MapManager : MonoBehaviour
 {
 
     [Header("Maps variables")]
-    // Active map
-    private List<Transform> tilesMap;
-    public GameObject wall;
+    private List<Transform> tilesMap; // Active map
     #region map1
     public Transform map1; // TileList
     private List<Transform> tilesMap1;
@@ -67,11 +65,16 @@ public class MapManager : MonoBehaviour
     #endregion
     public bool mapSwap;
     private List<int[,]> mapList;
-    private List<Vector3> goalList;
     public static int sublvl = 0;
     public static int arraylength = 8; // Arrays are symetrics
 
-
+    [Header("Goal")]
+    public Transform goal;
+    private List<Vector3> goalList;
+    
+    [Header("Wall Prefab")]
+    public GameObject wall;
+    
     public static MapManager mapInstance;
     //SINGLETON
     /// <summary>
@@ -128,10 +131,11 @@ public class MapManager : MonoBehaviour
             }
         }
         #endregion
+
         this.goalList = new List<Vector3>();
-        goalList.Add(new Vector3(1, 0, 0));
+        goalList.Add(new Vector3(7, 0, 7));
         goalList.Add(new Vector3(0, 0, 7));
-        GameMaster.gameMasterinstance.goal.transform.position = goalList[sublvl / 2];
+        this.goal.transform.position = goalList[sublvl / 2];
 
         map1active = true;
         map2active = false;
@@ -158,7 +162,7 @@ public class MapManager : MonoBehaviour
     }
     
     /// <summary>
-    /// Switch Map
+    /// Switch Map, subscriber from MainCharacterController event on Space
     /// </summary>
     private void SwitchMap()
     {

@@ -324,6 +324,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7252b9aa06f6acf4cbb760f65f93d6f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canMove: 0
   animator: {fileID: 0}
 --- !u!195 &317490584
 NavMeshAgent:
@@ -373,10 +374,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!4 &317490588 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400036, guid: 0faaca137bc5a794098e6b71f8bb22f6, type: 3}
-  m_PrefabInternal: {fileID: 900287835}
 --- !u!1 &323522758
 GameObject:
   m_ObjectHideFlags: 0
@@ -17912,6 +17909,8 @@ MonoBehaviour:
   wall: {fileID: 1654136378054878, guid: b75d18dbf6e47ea4a8647960ab90d43d, type: 2}
   map1: {fileID: 804992752}
   map2: {fileID: 1669639645}
+  goal: {fileID: 524100849}
+  mapSwap: 0
 --- !u!114 &2005528162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17924,8 +17923,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   retryUI: {fileID: 510910302}
-  player: {fileID: 317490588}
-  goal: {fileID: 524100849}
   timeFinish: {fileID: 323522760}
   finishUI: {fileID: 1242305755}
 --- !u!1 &2057634409

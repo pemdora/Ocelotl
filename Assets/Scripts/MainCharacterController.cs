@@ -29,13 +29,14 @@ public class MainCharacterController : MonoBehaviour
     public Animator animator;
     #endregion
 
-    #region Event
+    #region Events
     public delegate void WallCollision(); // delegate type is similar to a method signature,  similar to function pointers in C++
     public static event WallCollision OnWallCollisionEvent; // event variable attached to delegate function, static so that it can be called outside of our class
     public delegate void ReachedGoal();
     public static event ReachedGoal ReachedGoalEvent;
     public delegate void PressingEnter();
     public static event PressingEnter PressingEnterEvent;
+    private bool hasfinished;
     #endregion
 
     public static MainCharacterController characterController;
@@ -67,45 +68,10 @@ public class MainCharacterController : MonoBehaviour
         characterPos = this.transform.position; // since player position is not 100% accurate, we generate an accurate variable position
         targetPosition = this.transform.position;
 
-        speed = 1f;
+        speed = 2f;
         animator = GetComponent<Animator>();
         canMove = true;
-    }
-
-    /// <summary>
-    /// Check player inputs and move player or display mouse
-    /// </summary>
-    private void Update()
-    {
-        if (animator.GetBool("isWalking")) // if the player is moving
-        {
-            if (Vector3.Distance(targetPosition, transform.position) < 0.34f) // check character's position with mathematical aproximation
-            {
-                animator.SetBool("isWalking", false); // set walking animation
-                characterPos = targetPosition; // update characterPos
-            }
-            else
-            {
-                transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime); // translate
-            }
-        }
-        else
-        {
-            // if the player press "Space" and is not moving 
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                if (PressingEnterEvent != null) // if we have at least one subscriber
-                    PressingEnterEvent();
-                else
-                    Debug.LogError("No subscriber on PressingEnterEvent");
-            }
-            else
-            {
-                GetMovementInput();
-            }
-        }
-
-        ShowMouse();
+        hasfinished = false;
     }
 
     /// <summary>
@@ -207,6 +173,56 @@ public class MainCharacterController : MonoBehaviour
         }
     }
 
+    #region Events trigger
+
+    /// <summary>
+    /// Check player position, inputs and move player or display mouse
+    /// </summary>
+    private void Update()
+    {
+
+        if (animator.GetBool("isWalking")) // if the player is moving
+        {
+            // if the player has reached the tiled if wanted to move
+            if (Vector3.Distance(targetPosition, transform.position) < 0.34f) // check character's position with mathematical aproximation
+            {
+                animator.SetBool("isWalking", false); // set walking animation
+                characterPos = targetPosition; // update characterPos
+            }
+            else
+            {
+                transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime); // translate
+            }
+        }
+        else
+        {
+            // if the player press "Space" and is not moving 
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (PressingEnterEvent != null) // if we have at least one subscriber
+                    PressingEnterEvent();
+                else
+                    Debug.LogError("No subscriber on PressingEnterEvent");
+            }
+            else
+            {
+                GetMovementInput();
+            }
+        }
+
+        if (!hasfinished&&Vector3.Distance(this.transform.position, MapManager.mapInstance.goal.position) < 0.34f)
+        {
+            if (ReachedGoalEvent != null)
+                ReachedGoalEvent();
+            else
+                Debug.LogError("No subscriber on ReachedGoalEvent");
+            canMove = false;
+            hasfinished = true;
+        }
+
+        ShowMouse();
+    }
+
     /// <summary>
     /// Chack if a colision with a Wall occured with character
     /// </summary>
@@ -222,6 +238,7 @@ public class MainCharacterController : MonoBehaviour
                 Debug.LogError("No subscriber on OnWallCollisionEvent");
         }
     }
+    #endregion
 
     /// <summary>
     /// Show/hide mouse cursor

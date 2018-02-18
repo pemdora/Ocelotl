@@ -14,14 +14,10 @@ public class GameMaster : MonoBehaviour {
     public GameObject retryUI;
     public static bool retry = false; // for 1st loading, we don't want to display "retry" txt
 
-
-    // public GameObject finishUI;
+    
     public static float elapsedTime = 0; // we wan't to get the time spend on menu
-    public Transform player;
-    public Transform goal;
     public TextMeshProUGUI timeFinish;
     public GameObject finishUI;
-    private bool finish;
 
     public static GameMaster gameMasterinstance;
     //SINGLETON
@@ -41,7 +37,6 @@ public class GameMaster : MonoBehaviour {
         {
             gameMasterinstance = this;
         }
-        finish = false;
     }
 
     /// <summary>
@@ -51,6 +46,7 @@ public class GameMaster : MonoBehaviour {
     {
         retryUI.SetActive(GameMaster.retry); // Activate Retry Ui, Animation will play on Entry
         MainCharacterController.OnWallCollisionEvent += Retry; // Subscribing to OnCollision event
+        MainCharacterController.ReachedGoalEvent += LevelFinished;
     }
 
     /// <summary>
@@ -59,6 +55,7 @@ public class GameMaster : MonoBehaviour {
     public void OnDisable()
     {
         MainCharacterController.OnWallCollisionEvent -= Retry;
+        MainCharacterController.ReachedGoalEvent -= LevelFinished;
     }
 
     /// <summary>
@@ -71,28 +68,21 @@ public class GameMaster : MonoBehaviour {
     }
 
     /// <summary>
-    /// Check if the player has reached goal
+    /// Finishing level if the player has reached goal
     /// </summary>
-    private void Update()
+    public void LevelFinished()
     {
-        // float time = Mathf.Floor(Time.time - elapsedTime);
-        // timeFinish.text = time.ToString();
-        // if the player press "Space" and is not moving and not swaping maps
-        if (Vector3.Distance(player.position,goal.position) <=0.5f&&!finish)
+        Debug.Log("Finish" + (Time.time - elapsedTime));
+
+        finishUI.SetActive(true);
+        float time = Mathf.Floor(Time.time - elapsedTime);
+        timeFinish.text = time.ToString();
+        MapManager.sublvl += 2;
+        if (MapManager.sublvl != MAXLVL)
         {
-            MainCharacterController.characterController.canMove = false;
-            Debug.Log("Finish" + (Time.time - elapsedTime));
-            finish = true;
-            finishUI.SetActive(true);
-            float time = Mathf.Floor(Time.time - elapsedTime);
-            timeFinish.text = time.ToString();
-            MapManager.sublvl += 2;
-            if (MapManager.sublvl != MAXLVL)
-            {
-                IEnumerator coroutine = WaitAndLoadScene();
-                StartCoroutine(coroutine);
-            }
-        };
+            IEnumerator coroutine = WaitAndLoadScene();
+            StartCoroutine(coroutine);
+        }
     }
 
     /// <summary>
@@ -105,6 +95,7 @@ public class GameMaster : MonoBehaviour {
         #region WaitAndDo // this will be executed only when the coroutine have finished
         elapsedTime = Time.time - elapsedTime; // reset timer
         SceneManager.LoadScene(1); // Reload 1st lvl
+        GameMaster.retry = false;
         #endregion
     }
 }
