@@ -29,7 +29,8 @@ public class GameMaster : MonoBehaviour {
     /// </summary> 
     private void Awake()
     {
-        Debug.Log("Time"+(Time.time - elapsedTime));
+        Debug.Log("Time" + (Time.time));
+        Debug.Log("Start Time"+(Time.time - elapsedTime));
         if (gameMasterinstance != null)
         {
             Debug.LogError("More than one Player in scene");
@@ -78,8 +79,8 @@ public class GameMaster : MonoBehaviour {
         // if the player press "Space" and is not moving and not swaping maps
         if (Vector3.Distance(player.position,goal.position) <=0.5f&&!finish)
         {
-            Debug.Log("Finish");
-            Debug.Log("Time" + (Time.time - elapsedTime));
+            MainCharacterController.characterController.canMove = false;
+            Debug.Log("Finish" + (Time.time - elapsedTime));
             finish = true;
             finishUI.SetActive(true);
             float time = Mathf.Floor(Time.time - elapsedTime);
@@ -87,9 +88,22 @@ public class GameMaster : MonoBehaviour {
             MapManager.sublvl += 2;
             if (MapManager.sublvl != MAXLVL)
             {
-                elapsedTime = time; // reset timer
-                SceneManager.LoadScene(1); // Reload 1st lvl
+                IEnumerator coroutine = WaitAndLoadScene();
+                StartCoroutine(coroutine);
             }
         };
+    }
+
+    /// <summary>
+    /// Function that waits seconds and LoadNextScene
+    /// </summary>
+    /// <returns>Return true if a wall with the given X and Z postion or false if not</returns>
+    private IEnumerator WaitAndLoadScene()
+    {
+        yield return new WaitForSeconds(2f);
+        #region WaitAndDo // this will be executed only when the coroutine have finished
+        elapsedTime = Time.time - elapsedTime; // reset timer
+        SceneManager.LoadScene(1); // Reload 1st lvl
+        #endregion
     }
 }

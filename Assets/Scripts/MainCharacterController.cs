@@ -19,6 +19,7 @@ public class MainCharacterController : MonoBehaviour
     #region PositionVariables
     private Vector3 characterPos;
     private Vector3 targetPosition;
+    public bool canMove;
     #endregion
 
     #region AnimationVariables
@@ -56,12 +57,13 @@ public class MainCharacterController : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         mouseLock = false;
-        
+
         characterPos = this.transform.position; // since player position is not 100% accurate, we generate an accurate variable position
         targetPosition = this.transform.position;
 
         speed = 1f;
         animator = GetComponent<Animator>();
+        canMove = true;
     }
 
     /// <summary>
@@ -71,14 +73,14 @@ public class MainCharacterController : MonoBehaviour
     {
         if (animator.GetBool("isWalking")) // if the player is moving
         {
-            if (Vector3.Distance(targetPosition,transform.position)<0.34f) // check character's position with mathematical aproximation
+            if (Vector3.Distance(targetPosition, transform.position) < 0.34f) // check character's position with mathematical aproximation
             {
                 animator.SetBool("isWalking", false); // set walking animation
                 characterPos = targetPosition; // update characterPos
             }
             else
             {
-                transform.position = Vector3.MoveTowards(transform.position,targetPosition,speed*Time.deltaTime); // translate
+                transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime); // translate
             }
         }
         else
@@ -87,35 +89,38 @@ public class MainCharacterController : MonoBehaviour
         }
         ShowMouse();
     }
-    
+
     /// <summary>
     /// Get input and translate character 
     /// </summary>
     private void GetMovementInput()
     {
-        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+        if (canMove)
         {
-            targetPosition = characterPos + Vector3.back;
-            LookAt(targetPosition);
-            CanMoveFoward(targetPosition);
-        }
-        else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Z))  // else if because we cannot move in both Vertical et Horizontal axis 
-        {
-            targetPosition = characterPos + Vector3.forward;
-            LookAt(targetPosition);
-            CanMoveFoward(targetPosition);
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.Q))
-        {
-            targetPosition = characterPos + Vector3.left;
-            LookAt(targetPosition);
-            CanMoveFoward(targetPosition);
-        }
-        else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
-        {
-            targetPosition = characterPos + Vector3.right;
-            LookAt(targetPosition);
-            CanMoveFoward(targetPosition);
+            if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+            {
+                targetPosition = characterPos + Vector3.back;
+                LookAt(targetPosition);
+                CanMoveFoward(targetPosition);
+            }
+            else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Z))  // else if because we cannot move in both Vertical et Horizontal axis 
+            {
+                targetPosition = characterPos + Vector3.forward;
+                LookAt(targetPosition);
+                CanMoveFoward(targetPosition);
+            }
+            else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.Q))
+            {
+                targetPosition = characterPos + Vector3.left;
+                LookAt(targetPosition);
+                CanMoveFoward(targetPosition);
+            }
+            else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+            {
+                targetPosition = characterPos + Vector3.right;
+                LookAt(targetPosition);
+                CanMoveFoward(targetPosition);
+            }
         }
     }
 
@@ -146,7 +151,7 @@ public class MainCharacterController : MonoBehaviour
             animator.SetBool("isWalking", true);
         }
     }
-    
+
     /// <summary>
     /// Chack if the targeted position is walkable (a tile exist)
     /// </summary>

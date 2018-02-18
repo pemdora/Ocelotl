@@ -103,7 +103,6 @@ public class MapManager : MonoBehaviour
         mapList.Add(map4Array);
         tilesMap1 = new List<Transform>();
         tilesMap2 = new List<Transform>();
-        Debug.Log("Lvl :"+ sublvl);
         for (int i = 0; i < arraylength; i++)
         {
             for (int j = 0; j < arraylength; j++)
@@ -130,7 +129,7 @@ public class MapManager : MonoBehaviour
         }
         #endregion
         this.goalList = new List<Vector3>();
-        goalList.Add(new Vector3(1, 0, 0));
+        goalList.Add(new Vector3(7, 0, 7));
         goalList.Add(new Vector3(0, 0, 7));
         GameMaster.gameMasterinstance.goal.transform.position = goalList[sublvl / 2];
 
