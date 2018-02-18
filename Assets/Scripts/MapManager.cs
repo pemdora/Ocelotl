@@ -65,7 +65,7 @@ public class MapManager : MonoBehaviour
         { 0, 0, 1, 0, 0, 0, 0, 0 }
     };
     #endregion
-    private bool mapSwap;
+    public bool mapSwap;
     private List<int[,]> mapList;
     private List<Vector3> goalList;
     public static int sublvl = 0;
@@ -129,7 +129,7 @@ public class MapManager : MonoBehaviour
         }
         #endregion
         this.goalList = new List<Vector3>();
-        goalList.Add(new Vector3(7, 0, 7));
+        goalList.Add(new Vector3(1, 0, 0));
         goalList.Add(new Vector3(0, 0, 7));
         GameMaster.gameMasterinstance.goal.transform.position = goalList[sublvl / 2];
 
@@ -142,12 +142,27 @@ public class MapManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Get User input for switching Map
+    /// Function called when the object becomes enabled and active
     /// </summary>
-    private void Update()
+    public void OnEnable()
     {
-        // if the player press "Space" and is not moving and not swaping maps
-        if (Input.GetKeyDown(KeyCode.Space) && !MainCharacterController.characterController.animator.GetBool("isWalking") && mapSwap)
+        MainCharacterController.PressingEnterEvent += SwitchMap; // Subscribing to event
+    }
+
+    /// <summary>
+    /// Function called when the object becomes disabled and inactive
+    /// </summary>
+    public void OnDisable()
+    {
+        MainCharacterController.PressingEnterEvent -= SwitchMap;
+    }
+    
+    /// <summary>
+    /// Switch Map
+    /// </summary>
+    private void SwitchMap()
+    {
+        if (mapSwap) // if we are already not swaping maps
         {
             IEnumerator coroutine = SwapMaps();
             StartCoroutine(coroutine);

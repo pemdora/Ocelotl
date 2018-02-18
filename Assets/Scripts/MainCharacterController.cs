@@ -7,6 +7,8 @@ using UnityEngine.AI;
 /// Class responsible for main character controlls :
 /// Character is able to Move with WASD keys
 /// Show And Hide cursor with Right Click
+/// Check if it has a collision with a Wall
+/// Check if the tile with a given position is walkable or not
 /// </summary>
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -29,7 +31,11 @@ public class MainCharacterController : MonoBehaviour
 
     #region Event
     public delegate void WallCollision(); // delegate type is similar to a method signature,  similar to function pointers in C++
-    public static event WallCollision OnWallCollision; // event variable attached to delegate function, static so that it can be called outside of our class
+    public static event WallCollision OnWallCollisionEvent; // event variable attached to delegate function, static so that it can be called outside of our class
+    public delegate void ReachedGoal();
+    public static event ReachedGoal ReachedGoalEvent;
+    public delegate void PressingEnter();
+    public static event PressingEnter PressingEnterEvent;
     #endregion
 
     public static MainCharacterController characterController;
@@ -85,8 +91,20 @@ public class MainCharacterController : MonoBehaviour
         }
         else
         {
-            GetMovementInput();
+            // if the player press "Space" and is not moving 
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (PressingEnterEvent != null) // if we have at least one subscriber
+                    PressingEnterEvent();
+                else
+                    Debug.LogError("No subscriber on PressingEnterEvent");
+            }
+            else
+            {
+                GetMovementInput();
+            }
         }
+
         ShowMouse();
     }
 
@@ -198,8 +216,10 @@ public class MainCharacterController : MonoBehaviour
     {
         if (col.gameObject.tag == "Wall")
         {
-            if (OnWallCollision != null)
-                OnWallCollision();
+            if (OnWallCollisionEvent != null)
+                OnWallCollisionEvent();
+            else
+                Debug.LogError("No subscriber on OnWallCollisionEvent");
         }
     }
 

@@ -6,6 +6,7 @@ using TMPro;
 
 /// <summary>
 /// Class responsible for GameOver and Success
+/// Manage Time
 /// </summary>
 public class GameMaster : MonoBehaviour {
 
@@ -49,7 +50,7 @@ public class GameMaster : MonoBehaviour {
     public void OnEnable()
     {
         retryUI.SetActive(GameMaster.retry); // Activate Retry Ui, Animation will play on Entry
-        MainCharacterController.OnWallCollision += Retry; // Subscribing to OnCollision event
+        MainCharacterController.OnWallCollisionEvent += Retry; // Subscribing to OnCollision event
     }
 
     /// <summary>
@@ -57,7 +58,7 @@ public class GameMaster : MonoBehaviour {
     /// </summary>
     public void OnDisable()
     {
-        MainCharacterController.OnWallCollision -= Retry;
+        MainCharacterController.OnWallCollisionEvent -= Retry;
     }
 
     /// <summary>
