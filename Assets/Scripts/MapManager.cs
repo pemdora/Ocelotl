@@ -15,6 +15,14 @@ public class MapManager : MonoBehaviour
     #region map1
     public Transform map1; // TileList
     private List<Transform> tilesMap1;
+    private bool map1active;
+    #endregion
+    #region map2
+    public Transform map2; // TileList
+    private List<Transform> tilesMap2;
+    private bool map2active;
+    #endregion
+    #region Maps in Array
     // Array map (lighter than storing with list of game objects)
     public int[,] map1Array = new int[8, 8] { // map of 8 line and 8 colums
         { 0, 0, 1, 1, 0, 0, 1, 0 },
@@ -36,14 +44,32 @@ public class MapManager : MonoBehaviour
         { 0, 1, 1, 1, 1, 1, 0, 1 },
         { 0, 1, 0, 0, 0, 1, 0, 0 }
     };
-    private bool map1active;
-    #endregion
-    #region map2
-    public Transform map2; // TileList
-    private List<Transform> tilesMap2;
-    private bool map2active;
+    public int[,] map3Array = new int[8, 8] { // map of 8 line and 8 colums
+        { 0, 1, 0, 1, 0, 0, 1, 0 },
+        { 0, 1, 0, 0, 1, 0, 1, 1 },
+        { 1, 0, 0, 1, 0, 1, 0, 0 },
+        { 0, 1, 0, 0, 1, 0, 1, 0 },
+        { 0, 1, 0, 1, 0, 1, 1, 0 },
+        { 0, 0, 1, 0, 0, 0, 1, 0 },
+        { 0, 0, 1, 0, 1, 0, 1, 0 },
+        { 0, 0, 1, 0, 1, 0, 1, 0 }
+    };
+    public int[,] map4Array = new int[8, 8] { // map of 8 line and 8 colums
+        { 1, 1, 0, 0, 0, 1, 0, 0 },
+        { 0, 0, 1, 0, 1, 0, 1, 0 },
+        { 0, 1, 0, 1, 0, 0, 1, 0 },
+        { 0, 0, 0, 1, 0, 0, 0, 1 },
+        { 1, 1, 0, 1, 0, 1, 1, 0 },
+        { 0, 0, 1, 0, 1, 0, 1, 0 },
+        { 1, 1, 0, 0, 0, 0, 1, 1 },
+        { 0, 0, 1, 0, 0, 0, 0, 0 }
+    };
     #endregion
     private bool mapSwap;
+    private List<int[,]> mapList;
+    private List<Vector3> goalList;
+    public static int sublvl = 0;
+    public static int arraylength = 8; // Arrays are symetrics
 
 
     public static MapManager mapInstance;
@@ -69,13 +95,20 @@ public class MapManager : MonoBehaviour
     /// </summary>
     private void Start()
     {
+        #region Instanciate maps
+        this.mapList = new List<int[,]>();
+        mapList.Add(map1Array);
+        mapList.Add(map2Array);
+        mapList.Add(map3Array);
+        mapList.Add(map4Array);
         tilesMap1 = new List<Transform>();
-        // Get child elements from map object
-        for (int i = 0; i < map1Array.GetLength(0); i++)
+        tilesMap2 = new List<Transform>();
+        Debug.Log("Lvl :"+ sublvl);
+        for (int i = 0; i < arraylength; i++)
         {
-            for (int j = 0; j < map1Array.GetLength(1); j++)
+            for (int j = 0; j < arraylength; j++)
             {
-                if (map1Array[i, j] == 1)
+                if (mapList[sublvl][i, j] == 1)
                 {
                     Vector3 position = new Vector3(i, 0, j);
                     // Instantiate the wall, set its position
@@ -84,15 +117,7 @@ public class MapManager : MonoBehaviour
                     wallObj.transform.parent = map1.transform;
                     tilesMap1.Add(wallObj.transform);
                 }
-            }
-        }
-
-        tilesMap2 = new List<Transform>();
-        for (int i = 0; i < map2Array.GetLength(0); i++)
-        {
-            for (int j = 0; j < map2Array.GetLength(1); j++)
-            {
-                if (map2Array[i, j] == 1)
+                if (mapList[sublvl + 1][i, j] == 1)
                 {
                     Vector3 position = new Vector3(i, 0, j);
                     // Instantiate the wall, set its position
@@ -103,6 +128,11 @@ public class MapManager : MonoBehaviour
                 }
             }
         }
+        #endregion
+        this.goalList = new List<Vector3>();
+        goalList.Add(new Vector3(1, 0, 0));
+        goalList.Add(new Vector3(0, 0, 7));
+        GameMaster.gameMasterinstance.goal.transform.position = goalList[sublvl / 2];
 
         map1active = true;
         map2active = false;

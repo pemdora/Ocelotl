@@ -9,6 +9,7 @@ using TMPro;
 /// </summary>
 public class GameMaster : MonoBehaviour {
 
+    public static int MAXLVL = 4;
     public GameObject retryUI;
     public static bool retry = false; // for 1st loading, we don't want to display "retry" txt
 
@@ -21,7 +22,7 @@ public class GameMaster : MonoBehaviour {
     public GameObject finishUI;
     private bool finish;
 
-    public static GameMaster gameOverinstance;
+    public static GameMaster gameMasterinstance;
     //SINGLETON
     /// <summary>
     /// Initialize singleton instance and variables
@@ -29,14 +30,14 @@ public class GameMaster : MonoBehaviour {
     private void Awake()
     {
         Debug.Log("Time"+(Time.time - elapsedTime));
-        if (gameOverinstance != null)
+        if (gameMasterinstance != null)
         {
             Debug.LogError("More than one Player in scene");
             return;
         }
         else
         {
-            gameOverinstance = this;
+            gameMasterinstance = this;
         }
         finish = false;
     }
@@ -83,6 +84,12 @@ public class GameMaster : MonoBehaviour {
             finishUI.SetActive(true);
             float time = Mathf.Floor(Time.time - elapsedTime);
             timeFinish.text = time.ToString();
+            MapManager.sublvl += 2;
+            if (MapManager.sublvl != MAXLVL)
+            {
+                elapsedTime = time; // reset timer
+                SceneManager.LoadScene(1); // Reload 1st lvl
+            }
         };
     }
 }
