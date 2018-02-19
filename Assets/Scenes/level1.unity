@@ -8657,7 +8657,6 @@ GameObject:
   - component: {fileID: 1006838199}
   - component: {fileID: 1006838198}
   - component: {fileID: 1006838197}
-  - component: {fileID: 1006838196}
   m_Layer: 5
   m_Name: OptionMenu
   m_TagString: Untagged
@@ -8686,17 +8685,6 @@ RectTransform:
   m_AnchoredPosition: {x: -0.00012207031, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1006838196
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1006838194}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48c6317af36b30f4a9234cbd85b7aa14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1006838197
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8963,7 +8951,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: Right click to display mouse
+  m_text: Right click to hide or display mouse cursor
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: bef4ffd9a2221954fb0ef0a78eb8d5a8, type: 2}
   m_sharedMaterial: {fileID: 21459249025905142, guid: bef4ffd9a2221954fb0ef0a78eb8d5a8,
@@ -8991,8 +8979,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 0.7
-  m_fontSizeBase: 0.7
+  m_fontSize: 0.55
+  m_fontSizeBase: 0.55
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 0.7
@@ -9028,13 +9016,13 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 39.32959, y: 57.373608, z: 53.605904, w: 40.529385}
+  m_margin: {x: 39.879467, y: 57.51765, z: 52.004627, w: 40.529385}
   m_textInfo:
     textComponent: {fileID: 1163850894}
-    characterCount: 28
+    characterCount: 43
     spriteCount: 0
-    spaceCount: 4
-    wordCount: 5
+    spaceCount: 7
+    wordCount: 8
     linkCount: 0
     lineCount: 2
     pageCount: 1
@@ -13389,7 +13377,6 @@ GameObject:
   - component: {fileID: 1590867032}
   - component: {fileID: 1590867031}
   - component: {fileID: 1590867030}
-  - component: {fileID: 1590867029}
   m_Layer: 5
   m_Name: ButtonsMenu
   m_TagString: Untagged
@@ -13397,17 +13384,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1590867029
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1590867028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48c6317af36b30f4a9234cbd85b7aa14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1590867030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13488,7 +13464,8 @@ AudioSource:
   m_GameObject: {fileID: 1636835708}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: 45bd4e93b49b2df4684a54b8f193adcf,
+    type: 2}
   m_audioClip: {fileID: 8300000, guid: cfdc442d9017cac409bfe071d7d00927, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -13529,7 +13506,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 2
       time: 0
-      value: 0
+      value: 0.113
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -13830,7 +13807,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1590867029}
+      - m_Target: {fileID: 1757005621}
         m_MethodName: QuitGame
         m_Mode: 1
         m_Arguments:
@@ -14076,6 +14053,7 @@ GameObject:
   - component: {fileID: 1757005619}
   - component: {fileID: 1757005618}
   - component: {fileID: 1757005617}
+  - component: {fileID: 1757005621}
   m_Layer: 5
   m_Name: OverlayCanvas
   m_TagString: Untagged
@@ -14162,6 +14140,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1757005621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1757005616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48c6317af36b30f4a9234cbd85b7aa14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioMixer: {fileID: 24100000, guid: 45bd4e93b49b2df4684a54b8f193adcf, type: 2}
 --- !u!1 &1901421573
 GameObject:
   m_ObjectHideFlags: 0
@@ -14269,13 +14259,24 @@ MonoBehaviour:
   m_FillRect: {fileID: 1312021498}
   m_HandleRect: {fileID: 1586285749}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 1
+  m_MinValue: -90
+  m_MaxValue: 0
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1757005621}
+        m_MethodName: SetVolume
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!1 &1926938685

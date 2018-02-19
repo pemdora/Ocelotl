@@ -15,7 +15,7 @@ using UnityEngine.AI;
 public class MainCharacterController : MonoBehaviour
 {
 
-    private bool mouseLock;
+    private  static bool mouseLock = true;
     private NavMeshAgent agent;
 
     #region PositionVariables
@@ -63,7 +63,6 @@ public class MainCharacterController : MonoBehaviour
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        mouseLock = false;
 
         characterPos = this.transform.position; // since player position is not 100% accurate, we generate an accurate variable position
         targetPosition = this.transform.position;
@@ -248,14 +247,14 @@ public class MainCharacterController : MonoBehaviour
         if (Input.GetMouseButtonDown(1)) // Right click down
         {
             mouseLock = !mouseLock;
-        }
-        if (mouseLock)
-        {
-            Cursor.visible = true;
-        }
-        else
-        {
-            Cursor.visible = false;
+            if (mouseLock)
+            {
+                Cursor.visible = true;
+            }
+            else
+            {
+                Cursor.visible = false;
+            }
         }
     }
 
