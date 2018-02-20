@@ -11,13 +11,16 @@ using TMPro;
 public class GameMaster : MonoBehaviour {
 
     public static int MAXLVL = 4;
+
+    [Header("UI Elements variables")]
     public GameObject retryUI;
     public static bool retry = false; // for 1st loading, we don't want to display "retry" txt
+    public GameObject finishUI;
+    public Button optionButton;
 
-    
+
     public static float elapsedTime = 0; // we wan't to get the time spend on menu
     public TextMeshProUGUI timeFinish;
-    public GameObject finishUI;
 
     public static GameMaster gameMasterinstance;
     //SINGLETON
@@ -35,6 +38,8 @@ public class GameMaster : MonoBehaviour {
         }
         else
         {
+            Button btn = optionButton.GetComponent<Button>();
+            btn.onClick.AddListener(OptionOnClick);
             gameMasterinstance = this;
         }
     }
@@ -75,6 +80,7 @@ public class GameMaster : MonoBehaviour {
         Debug.Log("Finish" + (Time.time - elapsedTime));
 
         finishUI.SetActive(true);
+        MapManager.mapInstance.mapSwap = false; // cannot swap map anymore
         float time = Mathf.Floor(Time.time - elapsedTime);
         timeFinish.text = time.ToString();
         MapManager.sublvl += 2;
@@ -98,5 +104,13 @@ public class GameMaster : MonoBehaviour {
         GameMaster.retry = false;
         #endregion
     }
-    
+
+    /// <summary>
+    /// Function that triggers when option button is cliked on game
+    /// </summary>
+    private void OptionOnClick()
+    {
+        MapManager.mapInstance.mapSwap = false;
+        MainCharacterController.characterController.canMove = false;
+    }
 }

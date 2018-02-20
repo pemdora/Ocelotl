@@ -14466,8 +14466,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   retryUI: {fileID: 510910302}
-  timeFinish: {fileID: 323522760}
   finishUI: {fileID: 1242305755}
+  optionButton: {fileID: 234086860}
+  timeFinish: {fileID: 323522760}
 --- !u!1 &2057634409
 GameObject:
   m_ObjectHideFlags: 0
