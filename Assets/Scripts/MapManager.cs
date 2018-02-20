@@ -206,17 +206,14 @@ public class MapManager : MonoBehaviour
     /// <returns>Return true if a wall with the given X and Z postion or false if not</returns>
     public bool GetWall(float x, float z)
     {
-        foreach (Transform tile in tilesMap)
+        Transform tile = tilesMap.Find(tileFinding => (tileFinding.GetComponent<TileBlock>().x == x && tileFinding.GetComponent<TileBlock>().z == z));
+        if (tile != null)
         {
-            TileBlock tileBlock = tile.GetComponent<TileBlock>();
-            if (tileBlock != null)
-            {
-                if (tileBlock.x == x && tileBlock.z == z)
-                {
-                    return true;
-                }
-            }
+            return true;
         }
-        return false;
+        else
+        {
+            return false;
+        }
     }
 }
