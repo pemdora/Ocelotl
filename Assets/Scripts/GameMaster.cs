@@ -16,7 +16,6 @@ public class GameMaster : MonoBehaviour {
     public GameObject retryUI;
     public static bool retry = false; // for 1st loading, we don't want to display "retry" txt
     public GameObject finishUI;
-    public Button optionButton;
 
 
     public static float elapsedTime = 0; // we wan't to get the time spend on menu
@@ -38,8 +37,6 @@ public class GameMaster : MonoBehaviour {
         }
         else
         {
-            Button btn = optionButton.GetComponent<Button>();
-            btn.onClick.AddListener(OptionOnClick);
             gameMasterinstance = this;
         }
     }
@@ -80,7 +77,6 @@ public class GameMaster : MonoBehaviour {
         Debug.Log("Finish" + (Time.time - elapsedTime));
 
         finishUI.SetActive(true);
-        MapManager.mapInstance.mapSwap = false; // cannot swap map anymore
         float time = Mathf.Floor(Time.time - elapsedTime);
         timeFinish.text = time.ToString();
         MapManager.sublvl += 2;
@@ -108,9 +104,16 @@ public class GameMaster : MonoBehaviour {
     /// <summary>
     /// Function that triggers when option button is cliked on game
     /// </summary>
-    private void OptionOnClick()
+    public void PreventControlsInOptions()
     {
-        MapManager.mapInstance.mapSwap = false;
-        MainCharacterController.characterController.canMove = false;
+        MainCharacterController.characterController.lockControls = true;
+    }
+
+    /// <summary>
+    /// Function that triggers when back button is cliked on option menu in game
+    /// </summary>
+    public void RestoreControlsFromOptions()
+    {
+        MainCharacterController.characterController.lockControls = false;
     }
 }

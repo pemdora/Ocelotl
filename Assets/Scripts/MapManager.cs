@@ -133,7 +133,7 @@ public class MapManager : MonoBehaviour
         #endregion
 
         this.goalList = new List<Vector3>();
-        goalList.Add(new Vector3(7, 0, 7));
+        goalList.Add(new Vector3(1, 0, 0));
         goalList.Add(new Vector3(0, 0, 7));
         this.goal.transform.position = goalList[sublvl / 2];
 

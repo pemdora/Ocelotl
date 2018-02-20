@@ -17,6 +17,7 @@ public class MainCharacterController : MonoBehaviour
 
     private  static bool mouseLock = true;
     private NavMeshAgent agent;
+    public bool lockControls;
 
     #region PositionVariables
     private Vector3 characterPos;
@@ -71,6 +72,7 @@ public class MainCharacterController : MonoBehaviour
         animator = GetComponent<Animator>();
         canMove = true;
         hasfinished = false;
+        lockControls = false; // player can move at the begining at the level
     }
 
     /// <summary>
@@ -179,47 +181,50 @@ public class MainCharacterController : MonoBehaviour
     /// </summary>
     private void Update()
     {
-
-        if (animator.GetBool("isWalking")) // if the player is moving
+        // if we are not locking player controls, detect events from player
+        if (!lockControls)
         {
-            // if the player has reached the tiled if wanted to move
-            if (Vector3.Distance(targetPosition, transform.position) < 0.34f) // check character's position with mathematical aproximation
+            if (animator.GetBool("isWalking")) // if the player is moving
             {
-                animator.SetBool("isWalking", false); // set walking animation
-                characterPos = targetPosition; // update characterPos
-            }
-            else
-            {
-                transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime); // translate
-            }
-        }
-        else
-        {
-            // if the player press "Space" and is not moving 
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                if (PressingEnterEvent != null) // if we have at least one subscriber
-                    PressingEnterEvent();
+                // if the player has reached the tiled if wanted to move
+                if (Vector3.Distance(targetPosition, transform.position) < 0.34f) // check character's position with mathematical aproximation
+                {
+                    animator.SetBool("isWalking", false); // set walking animation
+                    characterPos = targetPosition; // update characterPos
+                }
                 else
-                    Debug.LogError("No subscriber on PressingEnterEvent");
+                {
+                    transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime); // translate
+                }
             }
             else
             {
-                GetMovementInput();
+                // if the player press "Space" and is not moving 
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    if (PressingEnterEvent != null) // if we have at least one subscriber
+                        PressingEnterEvent();
+                    else
+                        Debug.LogError("No subscriber on PressingEnterEvent");
+                }
+                else
+                {
+                    GetMovementInput();
+                }
+            }
+
+            if (!hasfinished && Vector3.Distance(this.transform.position, MapManager.mapInstance.goal.position) < 0.34f)
+            {
+                animator.SetBool("isWalking", false); // stop moving
+                if (ReachedGoalEvent != null)
+                    ReachedGoalEvent();
+                else
+                    Debug.LogError("No subscriber on ReachedGoalEvent");
+                lockControls = true;
+                hasfinished = true;
             }
         }
-
-        if (!hasfinished&&Vector3.Distance(this.transform.position, MapManager.mapInstance.goal.position) < 0.34f)
-        {
-            if (ReachedGoalEvent != null)
-                ReachedGoalEvent();
-            else
-                Debug.LogError("No subscriber on ReachedGoalEvent");
-            canMove = false;
-            hasfinished = true;
-        }
-
-        ShowMouse();
+        ShowMouse(); // still showing/hide mouse cursor at anytime
     }
 
     /// <summary>
