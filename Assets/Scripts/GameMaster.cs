@@ -19,8 +19,6 @@ public class GameMaster : MonoBehaviour {
     public TextMeshProUGUI timeFinish;
     public GameObject finishUI;
 
-    public static bool audioBegin = false;
-
     public static GameMaster gameMasterinstance;
     //SINGLETON
     /// <summary>
@@ -38,12 +36,6 @@ public class GameMaster : MonoBehaviour {
         else
         {
             gameMasterinstance = this;
-            if (!audioBegin)
-            {
-                AudioManager.audioManagerInstance.SelectAudio("TEMP Daniel_Birch_-_02_-_Deep_In_Peace");
-                AudioManager.audioManagerInstance.PlaySelectedAudio(true); // looping = true
-                GameMaster.audioBegin = true;
-            }
         }
     }
 

@@ -25,7 +25,6 @@ public class AudioManager : MonoBehaviour
         {
             // Get child elements from sounds attached to game object
             audioMusics = new List<AudioSource>();
-            Debug.Log(this.gameObject.transform.childCount);
             for (int i = 0; i < this.gameObject.transform.childCount; i++)
             {
                 AudioSource audio = this.gameObject.transform.GetChild(i).GetComponent<AudioSource>(); // getting AudioSource component from child transform
