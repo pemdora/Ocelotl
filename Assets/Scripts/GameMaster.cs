@@ -20,7 +20,6 @@ public class GameMaster : MonoBehaviour {
     public GameObject finishUI;
 
     public static bool audioBegin = false;
-    public GameObject audioMusic;
 
     public static GameMaster gameMasterinstance;
     //SINGLETON
@@ -41,13 +40,9 @@ public class GameMaster : MonoBehaviour {
             gameMasterinstance = this;
             if (!audioBegin)
             {
-                audioMusic.GetComponent<AudioSource>().Play();
-                DontDestroyOnLoad(audioMusic); // We keep one instance for music that should never be destroyed
+                AudioManager.audioManagerInstance.SelectAudio("TEMP Daniel_Birch_-_02_-_Deep_In_Peace");
+                AudioManager.audioManagerInstance.PlaySelectedAudio(true); // looping = true
                 GameMaster.audioBegin = true;
-            }
-            else
-            {
-                Destroy(this.audioMusic); // destroy new music instance that is creating when reloading scene
             }
         }
     }
@@ -112,12 +107,4 @@ public class GameMaster : MonoBehaviour {
         #endregion
     }
     
-    /* STOP audio
-     * 
-     * if(condition)
-     {
-         audio.Stop();
-         AudioBegin = false;
-     }
-     */
 }

@@ -4,8 +4,10 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Audio;
 
+/// <summary>
+/// Class responsible for Menu interactions :
+/// </summary>
 public class Menu : MonoBehaviour {
-    public AudioMixer audioMixer;
 
     public void PlayGame()
     {
@@ -26,6 +28,6 @@ public class Menu : MonoBehaviour {
 
     public void SetVolume(float volume)
     {
-        audioMixer.SetFloat("volume", volume);
+        AudioManager.audioManagerInstance.ChangeVolume(volume);
     }
 }
