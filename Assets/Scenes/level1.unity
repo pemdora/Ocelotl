@@ -335,6 +335,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7252b9aa06f6acf4cbb760f65f93d6f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lockControls: 0
   canMove: 0
   animator: {fileID: 0}
 --- !u!195 &317490584
@@ -14094,6 +14095,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48c6317af36b30f4a9234cbd85b7aa14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &1884760504 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4340887024088284, guid: 88c28f5c2d499c04090780bd51bed6dd,
+    type: 2}
+  m_PrefabInternal: {fileID: 882032437}
 --- !u!1 &1901421573
 GameObject:
   m_ObjectHideFlags: 0
@@ -14476,6 +14482,7 @@ MonoBehaviour:
   mapSwap: 0
   goal: {fileID: 524100849}
   wall: {fileID: 1654136378054878, guid: b75d18dbf6e47ea4a8647960ab90d43d, type: 2}
+  floor: {fileID: 1884760504}
 --- !u!114 &2005528162
 MonoBehaviour:
   m_ObjectHideFlags: 0
