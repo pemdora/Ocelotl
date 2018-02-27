@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
 /// <summary>
 /// Class responsible for Map controlls :
@@ -23,6 +24,7 @@ public class MapManager : MonoBehaviour
     #endregion
     #region Maps in Array
     // Array map (lighter than storing with list of game objects)
+    /*
     public int[,] map1Array = new int[8, 8] { // map of 8 line and 8 colums
         { 0, 1, 1, 1, 1, 1, 1, 1 },
         { 0, 1, 1, 1, 1, 1, 1, 1 },
@@ -43,7 +45,7 @@ public class MapManager : MonoBehaviour
         { 0, 1, 1, 1, 1, 1, 1, 1 },
         { 0, 1, 1, 1, 1, 1, 1, 1 },
     };
-    /*
+    */
     public int[,] map1Array = new int[8, 8] { // map of 8 line and 8 colums
         { 0, 0, 1, 1, 0, 0, 1, 0 },
         { 0, 1, 0, 0, 1, 1, 0, 0 },
@@ -63,7 +65,7 @@ public class MapManager : MonoBehaviour
         { 0, 0, 0, 1, 0, 0, 1, 0 },
         { 0, 1, 1, 1, 1, 1, 0, 1 },
         { 0, 1, 0, 0, 0, 1, 0, 0 }
-    };*/
+    };
     public int[,] map3Array = new int[8, 8] { // map of 8 line and 8 colums
         { 0, 1, 0, 1, 0, 0, 1, 0 },
         { 0, 1, 0, 0, 1, 0, 1, 1 },
@@ -75,7 +77,7 @@ public class MapManager : MonoBehaviour
         { 0, 0, 1, 0, 1, 0, 1, 0 }
     };
     public int[,] map4Array = new int[8, 8] { // map of 8 line and 8 colums
-        { 1, 1, 0, 0, 0, 1, 0, 0 },
+        { 1, 1, 0, 0, 0, 1, 1, 0 },
         { 0, 0, 1, 0, 1, 0, 1, 0 },
         { 0, 1, 0, 1, 0, 0, 1, 0 },
         { 0, 0, 0, 1, 0, 0, 0, 1 },
@@ -164,7 +166,6 @@ public class MapManager : MonoBehaviour
                     if (!containsTile)
                     {
                         tile.TileGameObject = floormap.Find(obj => obj.position.x == i && obj.position.z == j);
-                        tile.ChangeColor();
                         graph.Add(tile);
                     }
                 }
@@ -184,7 +185,6 @@ public class MapManager : MonoBehaviour
                     if (!containsTile)
                     {
                         tile.TileGameObject = floormap.Find(obj => obj.position.x == i && obj.position.z == j);
-                        tile.ChangeColor();
                         graph.Add(tile);
                     }
                 }
@@ -194,16 +194,27 @@ public class MapManager : MonoBehaviour
         Debug.Log(graph.Count);
         foreach (GraphTile tile in graph)
         {
-            tile.GetNeighbors(graph, tile);
+            GetNeighbors(graph, tile);
         }
         #endregion
 
         #region Manualy defining start and goal points
+        //Start Point
+        if (graph.Exists(item => (item.x == 0) && (item.z == 0)))
+        {
+            startTile = graph.Find(item => (item.x == 0) && (item.z == 0));
+        }
+        else
+        {
+            Debug.Log("Error Start tile doesn't exist");
+        }
         //GoalPoints
         this.goalList = new List<Vector3>();
         goalList.Add(new Vector3(7, 0, 7));
         goalList.Add(new Vector3(0, 0, 7));
         this.goal.transform.position = goalList[sublvl / 2];
+
+        endTile = graph.Find(item => (item.x == goalList[sublvl / 2].x) && (item.z == goalList[sublvl / 2].z));
         #endregion
 
         map1active = true;
@@ -212,6 +223,7 @@ public class MapManager : MonoBehaviour
         map2.gameObject.SetActive(map2active);
         tilesMap = tilesMap1;
         mapSwap = true;
+        Debug.Log(ShortestPath());
     }
 
     /// <summary>
@@ -275,7 +287,7 @@ public class MapManager : MonoBehaviour
     /// <returns>Return true if a wall with the given X and Z postion or false if not</returns>
     public bool GetWall(float x, float z)
     {
-        Transform tile = tilesMap.Find(tileFinding => (tileFinding.GetComponent<TileBlock>().x == x && tileFinding.GetComponent<TileBlock>().z == z));
+        Transform tile = tilesMap.Find(tileFinding => (tileFinding.position.x == x && tileFinding.position.z == z));
         if (tile != null)
         {
             return true;
@@ -286,40 +298,93 @@ public class MapManager : MonoBehaviour
         }
     }
 
-}
-
-public struct GraphTile
-{
-    public List<GraphTile> neighbors;
-    public float x;
-    public float z;
-    public Transform tileGameObject;
-
-    public GraphTile(float x, float z)
+    /// <summary>
+    /// Chack if a shortest path exists in the graph of walkable tile
+    /// </summary>
+    /// <returns>Return true if a path exists or false if not</returns>
+    public bool ShortestPath()
     {
-        this.neighbors = new List<GraphTile>(4); // 4 neighbors max
-        this.x = x;
-        this.z = z;
-        this.tileGameObject = null;
-    }
+        // Since GraphTile is a structure it can't be directly null, so we transformed it to GraphTile? or Nullable<GraphTile>
+        List<GraphTile> openList = new List<GraphTile>(); // set of nodes to be evaluated
+        List<GraphTile> closedList = new List<GraphTile>(); // set of nodes already evaluated
 
-    public Transform TileGameObject
-    {
-        set
+        openList.Add((GraphTile)this.startTile);
+        while (openList.Count != 0) // while the list is not empty
         {
-            this.tileGameObject = value;
+            GraphTile current = null;
+
+            current = openList[0];
+            if (current == null)
+            {
+                Debug.Log("Error current GraphTile is null");
+                return false;
+            }
+
+            openList.Remove(current);
+            
+            if (current == endTile) // Final path found
+            {
+                Debug.Log("Path Found !!");
+                Reconstruct_path(startTile, current);
+                return true;
+            }
+
+            List<GraphTile> neighbors = current.neighbors;
+            for (int i = 0; i < neighbors.Count; i++)
+            {
+                GraphTile neighbor = neighbors[i];
+                if (closedList.Contains(neighbor)) // if the node has already been 
+                {
+                    continue;
+                }
+
+                // float costToNeighbor = current.G + GetDistance(current, neighbor);
+                if (!openList.Contains(neighbor)) //costToNeighbor < neighbor.G || 
+                {
+                    // neighbor.G = costToNeighbor;
+                    // neighbor.H = GetDistance(neighbor, end);
+                    // neighbor.F = neighbor.G + neighbor.H;
+
+                    neighbor.predecessor = current;
+
+                    if (!openList.Contains(neighbor))
+                    {
+                        openList.Add(neighbor);
+                    }
+                }
+
+            }
+
+            if (!closedList.Contains(current))
+                closedList.Add(current);
+
         }
+        return false;
     }
 
-    public void ChangeColor()
+
+    public void Reconstruct_path(GraphTile startNode, GraphTile endNode)
     {
-        if (this.tileGameObject != null)
+        List<GraphTile> solution = new List<GraphTile>();
+        GraphTile node = endNode;
+
+        // We will reconstruct the path from the end
+        while (node != startNode && node.predecessor != null) //node.Predecessor != null
         {
-            Renderer render = this.tileGameObject.GetComponent<Renderer>();
-            render.material.color = Color.cyan;
+            solution.Add(node);
+            node = node.predecessor;
+            node.ChangeColor();
         }
+        solution.Add(startNode);
+        solution.Reverse();
     }
 
+
+    /// <summary>
+    /// Get Neighbors for a node in a list of GraphTile
+    /// </summary>
+    /// <param name = graph > List of nodes (GraphTile).</param>
+    /// <param name = node > Node given to search neighbors .</param>
     public void GetNeighbors(List<GraphTile> graph, GraphTile node)
     {
         if (graph != null)
@@ -343,13 +408,10 @@ public struct GraphTile
                         neighbors.Add(tile);
                     }
                 }
-
             }
             node.neighbors = neighbors;
         }
         else
             Debug.Log("Walkable Graph is null");
     }
-
-
 }
