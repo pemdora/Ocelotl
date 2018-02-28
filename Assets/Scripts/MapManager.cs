@@ -175,23 +175,22 @@ public class MapManager : MonoBehaviour
             }
         }
 
-        Debug.Log(walkableGraph.Count);
-        foreach (GraphTile tile in walkableGraph)
-        {
-            GetNeighbors(walkableGraph, tile);
-        }
-        #endregion
 
         #region Manualy defining start and goal points
         //Start Point
-        if (walkableGraph.Exists(item => (item.x == 0) && (item.z == 0)))
+        if (walkableGraph.Exists(item => (item.x == 0) && (item.z == 0))) // if startTile already exist in walkableGraph
         {
             startTile = walkableGraph.Find(item => (item.x == 0) && (item.z == 0));
         }
         else
         {
-            Debug.Log("Error Start tile doesn't exist");
+            walkableGraph.Remove(walkableGraph.Find(item => (item.x == 0) && (item.z == 0)));
+            GraphTile tile = new GraphTile(0, 0);
+            tile.TileGameObject = floormap.Find(obj => obj.position.x == 0 && obj.position.z == 0);
+            startTile = tile;
+            walkableGraph.Add(tile);
         }
+
         //GoalPoints
         this.goalList = new List<Vector3>();
         goalList.Add(new Vector3(7, 0, 7));
@@ -199,6 +198,13 @@ public class MapManager : MonoBehaviour
         this.goal.transform.position = goalList[sublvl / 2];
 
         endTile = walkableGraph.Find(item => (item.x == goalList[sublvl / 2].x) && (item.z == goalList[sublvl / 2].z));
+        #endregion
+
+        Debug.Log(walkableGraph.Count);
+        foreach (GraphTile tempTile in walkableGraph)
+        {
+            GetNeighbors(walkableGraph, tempTile);
+        }
         #endregion
 
         map1active = true;
