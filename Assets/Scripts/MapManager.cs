@@ -102,7 +102,8 @@ public class MapManager : MonoBehaviour
     [Header("Walkable Graph")]
     public Transform floor;
     private List<Transform> floormap;
-    private List<GraphTile> graph;
+    private List<GraphTile> walkableGraph; // the walkable area that the player can walk through by switching maps
+    //    private List<GraphTile> obstacleGraph; // the graph of walls
     private GraphTile startTile;
     private GraphTile endTile;
 
@@ -138,7 +139,7 @@ public class MapManager : MonoBehaviour
         mapList.Add(map4Array);
         tilesMap1 = new List<Transform>();
         tilesMap2 = new List<Transform>();
-        graph = new List<GraphTile>();
+        walkableGraph = new List<GraphTile>();
         // Get child elements from map object
         floormap = new List<Transform>();
         for (int i = 0; i < floor.childCount; i++)
@@ -150,59 +151,42 @@ public class MapManager : MonoBehaviour
         {
             for (int j = 0; j < arraylength; j++) // z values
             {
-                if (mapList[sublvl][i, j] == 1) // If we got a 1 == wall position in the map array
+                // Map 1 
+                if (mapList[sublvl][i, j] == 1) // If we got a 1 => wall position in the map array
                 {
-                    Vector3 position = new Vector3(i, 0, j);
-                    // Instantiate the wall, set its position
-                    GameObject wallObj = (GameObject)Instantiate(this.wall);
-                    wallObj.transform.position = position;
-                    wallObj.transform.parent = map1.transform;
-                    tilesMap1.Add(wallObj.transform);
+                    // Instanciate wall objects for 1st map
+                    InstanciateWall(i, j, tilesMap1, map1);
                 }
                 else // its a walkable tile
                 {
-                    GraphTile tile = new GraphTile(i, j);
-                    bool containsTile = graph.Any(item => item.x == tile.x && item.z == tile.z);
-                    if (!containsTile)
-                    {
-                        tile.TileGameObject = floormap.Find(obj => obj.position.x == i && obj.position.z == j);
-                        graph.Add(tile);
-                    }
+                    CheckAndAddGraphTile(i, j);
                 }
+
+                // Map 2
                 if (mapList[sublvl + 1][i, j] == 1)
                 {
-                    Vector3 position = new Vector3(i, 0, j);
-                    // Instantiate the wall, set its position
-                    GameObject wallObj = (GameObject)Instantiate(this.wall);
-                    wallObj.transform.position = position;
-                    wallObj.transform.parent = map2.transform;
-                    tilesMap2.Add(wallObj.transform);
+                    // Instanciate wall objects for 2d map
+                    InstanciateWall(i, j, tilesMap2, map2);
                 }
                 else
                 {
-                    GraphTile tile = new GraphTile(i, j);
-                    bool containsTile = graph.Any(item => item.x == tile.x && item.z == tile.z);
-                    if (!containsTile)
-                    {
-                        tile.TileGameObject = floormap.Find(obj => obj.position.x == i && obj.position.z == j);
-                        graph.Add(tile);
-                    }
+                    CheckAndAddGraphTile(i, j);
                 }
             }
         }
 
-        Debug.Log(graph.Count);
-        foreach (GraphTile tile in graph)
+        Debug.Log(walkableGraph.Count);
+        foreach (GraphTile tile in walkableGraph)
         {
-            GetNeighbors(graph, tile);
+            GetNeighbors(walkableGraph, tile);
         }
         #endregion
 
         #region Manualy defining start and goal points
         //Start Point
-        if (graph.Exists(item => (item.x == 0) && (item.z == 0)))
+        if (walkableGraph.Exists(item => (item.x == 0) && (item.z == 0)))
         {
-            startTile = graph.Find(item => (item.x == 0) && (item.z == 0));
+            startTile = walkableGraph.Find(item => (item.x == 0) && (item.z == 0));
         }
         else
         {
@@ -214,7 +198,7 @@ public class MapManager : MonoBehaviour
         goalList.Add(new Vector3(0, 0, 7));
         this.goal.transform.position = goalList[sublvl / 2];
 
-        endTile = graph.Find(item => (item.x == goalList[sublvl / 2].x) && (item.z == goalList[sublvl / 2].z));
+        endTile = walkableGraph.Find(item => (item.x == goalList[sublvl / 2].x) && (item.z == goalList[sublvl / 2].z));
         #endregion
 
         map1active = true;
@@ -224,6 +208,41 @@ public class MapManager : MonoBehaviour
         tilesMap = tilesMap1;
         mapSwap = true;
         Debug.Log(ShortestPath());
+    }
+
+    /// <summary>
+    /// Function used to create a wall object in the world
+    /// and attach this wall to a map
+    /// </summary>
+    /// <param name = x > float position in X axis.</param>
+    /// <param name = z > float position in Z axis.</param>
+    /// <param name = map > Map parent transform </param>
+    /// <param name = mapList > List of transforms for a map </param>
+    public void InstanciateWall(int x, int z, List<Transform> mapList, Transform map)
+    {
+        Vector3 position = new Vector3(x, 0, z);
+        // Instantiate the wall, set its position
+        GameObject wallObj = (GameObject)Instantiate(this.wall);
+        wallObj.transform.position = position;
+        wallObj.transform.parent = map.transform;
+        mapList.Add(wallObj.transform);
+    }
+
+    /// <summary>
+    /// Function used to check if tile already exist in list
+    /// if not, add the tle to walkableGraph
+    /// </summary>
+    /// <param name = x > float position in X axis.</param>
+    /// <param name = z > float position in Z axis.</param>
+    public void CheckAndAddGraphTile(int x, int z)
+    {
+        GraphTile tile = new GraphTile(x, z);
+        bool containsTile = walkableGraph.Any(item => item.x == tile.x && item.z == tile.z);
+        if (!containsTile)
+        {
+            tile.TileGameObject = floormap.Find(obj => obj.position.x == x && obj.position.z == z);
+            walkableGraph.Add(tile);
+        }
     }
 
     /// <summary>
@@ -321,7 +340,7 @@ public class MapManager : MonoBehaviour
             }
 
             openList.Remove(current);
-            
+
             if (current == endTile) // Final path found
             {
                 Debug.Log("Path Found !!");
