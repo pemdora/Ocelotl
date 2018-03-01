@@ -24,28 +24,6 @@ public class MapManager : MonoBehaviour
     #endregion
     #region Maps in Array
     // Array map (lighter than storing with list of game objects)
-    /*
-    public int[,] map1Array = new int[8, 8] { // map of 8 line and 8 colums
-        { 0, 1, 1, 1, 1, 1, 1, 1 },
-        { 0, 1, 1, 1, 1, 1, 1, 1 },
-        { 0, 1, 1, 1, 1, 1, 1, 1 },
-        { 0, 1, 1, 1, 1, 1, 1, 1 },
-        { 0, 1, 1, 1, 1, 1, 1, 1 },
-        { 0, 1, 1, 1, 1, 1, 1, 1 },
-        { 0, 1, 1, 1, 1, 1, 1, 1 },
-        { 0, 1, 1, 1, 1, 1, 1, 1 },
-    };
-    public int[,] map2Array = new int[8, 8] { // map of 8 line and 8 colums
-        { 0, 1, 1, 1, 1, 1, 1, 1 },
-        { 0, 1, 1, 1, 1, 1, 1, 1 },
-        { 0, 1, 1, 1, 1, 1, 1, 1 },
-        { 0, 1, 1, 1, 1, 1, 1, 1 },
-        { 0, 1, 1, 1, 1, 1, 1, 1 },
-        { 0, 1, 1, 1, 1, 1, 1, 1 },
-        { 0, 1, 1, 1, 1, 1, 1, 1 },
-        { 0, 1, 1, 1, 1, 1, 1, 1 },
-    };
-    */
     public int[,] map1Array = new int[8, 8] { // map of 8 line and 8 colums
         { 0, 0, 1, 1, 0, 0, 1, 0 },
         { 0, 1, 0, 0, 1, 1, 0, 0 },
@@ -77,7 +55,7 @@ public class MapManager : MonoBehaviour
         { 0, 0, 1, 0, 1, 0, 1, 0 }
     };
     public int[,] map4Array = new int[8, 8] { // map of 8 line and 8 colums
-        { 1, 1, 0, 0, 0, 1, 1, 0 },
+        { 1, 1, 0, 0, 0, 1, 0, 0 },
         { 0, 0, 1, 0, 1, 0, 1, 0 },
         { 0, 1, 0, 1, 0, 0, 1, 0 },
         { 0, 0, 0, 1, 0, 0, 0, 1 },
@@ -86,6 +64,27 @@ public class MapManager : MonoBehaviour
         { 1, 1, 0, 0, 0, 0, 1, 1 },
         { 0, 0, 1, 0, 0, 0, 0, 0 }
     };
+    /*
+    public int[,] map5Array = new int[8, 8] { // map of 8 line and 8 colums
+        { 0, 1, 0, 1, 0, 0, 1, 0 },
+        { 0, 1, 0, 0, 1, 0, 1, 1 },
+        { 1, 0, 0, 1, 0, 1, 0, 0 },
+        { 0, 1, 0, 0, 1, 0, 1, 0 },
+        { 0, 1, 0, 1, 0, 1, 1, 0 },
+        { 0, 0, 1, 0, 0, 0, 1, 0 },
+        { 0, 0, 1, 0, 1, 0, 1, 0 },
+        { 0, 0, 1, 0, 1, 0, 1, 0 }
+    };
+    public int[,] map6Array = new int[8, 8] { // map of 8 line and 8 colums
+        { 1, 1, 0, 0, 0, 1, 1, 0 },
+        { 0, 0, 1, 0, 1, 0, 1, 0 },
+        { 0, 1, 0, 1, 0, 0, 1, 0 },
+        { 0, 0, 0, 1, 0, 0, 0, 1 },
+        { 1, 1, 0, 1, 0, 1, 1, 0 },
+        { 0, 0, 1, 0, 1, 0, 1, 0 },
+        { 1, 1, 0, 0, 0, 0, 1, 1 },
+        { 0, 0, 1, 0, 0, 0, 0, 0 }
+    };*/
     #endregion
     public bool mapSwap;
     private List<int[,]> mapList;
@@ -103,7 +102,8 @@ public class MapManager : MonoBehaviour
     public Transform floor;
     private List<Transform> floormap;
     private List<GraphTile> walkableGraph; // the walkable area that the player can walk through by switching maps
-    //    private List<GraphTile> obstacleGraph; // the graph of walls
+    private List<GraphTile> obstacleGraph1; // the graph of walls
+    private List<GraphTile> obstacleGraph2; // the graph of walls
     private GraphTile startTile;
     private GraphTile endTile;
 
@@ -140,6 +140,8 @@ public class MapManager : MonoBehaviour
         tilesMap1 = new List<Transform>();
         tilesMap2 = new List<Transform>();
         walkableGraph = new List<GraphTile>();
+        obstacleGraph1 = new List<GraphTile>();
+        obstacleGraph2 = new List<GraphTile>();
         // Get child elements from map object
         floormap = new List<Transform>();
         for (int i = 0; i < floor.childCount; i++)
@@ -156,6 +158,8 @@ public class MapManager : MonoBehaviour
                 {
                     // Instanciate wall objects for 1st map
                     InstanciateWall(i, j, tilesMap1, map1);
+                    GraphTile tile = new GraphTile(i, j);
+                    obstacleGraph1.Add(tile);
                 }
                 else // its a walkable tile
                 {
@@ -167,6 +171,8 @@ public class MapManager : MonoBehaviour
                 {
                     // Instanciate wall objects for 2d map
                     InstanciateWall(i, j, tilesMap2, map2);
+                    GraphTile tile = new GraphTile(i, j);
+                    obstacleGraph2.Add(tile);
                 }
                 else
                 {
@@ -184,9 +190,10 @@ public class MapManager : MonoBehaviour
         }
         else
         {
-            walkableGraph.Remove(walkableGraph.Find(item => (item.x == 0) && (item.z == 0)));
-            GraphTile tile = new GraphTile(0, 0);
-            tile.TileGameObject = floormap.Find(obj => obj.position.x == 0 && obj.position.z == 0);
+            GraphTile tile = new GraphTile(0, 0)
+            {
+                TileGameObject = floormap.Find(obj => obj.position.x == 0 && obj.position.z == 0)
+            };
             startTile = tile;
             walkableGraph.Add(tile);
         }
@@ -200,12 +207,23 @@ public class MapManager : MonoBehaviour
         endTile = walkableGraph.Find(item => (item.x == goalList[sublvl / 2].x) && (item.z == goalList[sublvl / 2].z));
         #endregion
 
+        // Get Neighbors for walkable tile
         Debug.Log(walkableGraph.Count);
         foreach (GraphTile tempTile in walkableGraph)
         {
             GetNeighbors(walkableGraph, tempTile);
         }
         #endregion
+
+        // Remove unwalkable neighbors tile in walkable graph
+        foreach (GraphTile tempTile in obstacleGraph1)
+        {
+            RemoveUnwalkableTile(obstacleGraph2, tempTile);
+        }
+        foreach (GraphTile tempTile in obstacleGraph2)
+        {
+            RemoveUnwalkableTile(obstacleGraph1, tempTile);
+        }
 
         map1active = true;
         map2active = false;
@@ -296,9 +314,9 @@ public class MapManager : MonoBehaviour
             tilesMap = tilesMap2;
         foreach (Transform tile in tilesMap)
         {
-            tile.position += new Vector3(0, 5, 0);
+            tile.position += new Vector3(0, 2, 0);
         }
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
         #region WaitAndDo // this will be executed only when the coroutine have finished
         mapSwap = true;
         #endregion
@@ -417,7 +435,7 @@ public class MapManager : MonoBehaviour
             List<GraphTile> neighbors = new List<GraphTile>();
             if (!node.Equals(null))
             {
-                // We have 4 neighbors maximum
+                // We have 4 neighbors maximum : x-1,z | x+1,z | x,z-1 | x,z+1 
                 for (int i = -1; i < 2; i += 2)
                 {
                     bool tileExist = graph.Exists(item => (item.x == (node.x + i)) && (item.z == node.z));
@@ -435,6 +453,50 @@ public class MapManager : MonoBehaviour
                 }
             }
             node.neighbors = neighbors;
+        }
+        else
+            Debug.Log("Walkable Graph is null");
+    }
+
+    /// <summary>
+    /// Get Neighbors for a (wall) node in a list of GraphTile
+    /// Then remove existing neihbors in walkable graph.
+    /// This function is used to remove unconsistant unwalkable tile in the walkable graph.
+    /// </summary>
+    /// <param name = graph > List of nodes (GraphTile).</param>
+    /// <param name = node > Node given to search neighbors .</param>
+    public void RemoveUnwalkableTile(List<GraphTile> graph, GraphTile wallNode)
+    {
+        if (graph != null)
+        {
+            if (!wallNode.Equals(null))
+            {
+
+                if (graph.Exists(item => (item.x == wallNode.x) && (item.z == wallNode.z))) // if the wall exists in the other map, we don't need to remove something
+                {
+                    return;
+                }
+                // get walkable node 
+                GraphTile walkableNode = walkableGraph.Find(item => (item.x == wallNode.x) && (item.z == wallNode.z));
+                // We have 4 neighbors maximum : x-1,z | x+1,z | x,z-1 | x,z+1 
+                for (int i = -1; i < 2; i += 2)
+                {
+                    if (graph.Exists(item => (item.x == (wallNode.x + i)) && (item.z == wallNode.z))) // if an adjacent neighbor exists in the given graph
+                    {
+                        Debug.Log("Removed");
+                        // we remove the unwalkable neighbors tile
+                        GraphTile unwalkableNeighbor = walkableGraph.Find(item => (item.x == (wallNode.x + i)) && (item.z == wallNode.z));
+                        walkableNode.neighbors.Remove(unwalkableNeighbor);
+                    }
+                    if (graph.Exists(item => (item.x == (wallNode.x)) && (item.z == wallNode.z + i))) // if an adjacent neighbor exists in the given graph
+                    {
+                        Debug.Log("Removed");
+                        GraphTile unwalkableNeighbor = walkableGraph.Find(item => (item.x == wallNode.x) && (item.z == wallNode.z + i));
+                        walkableNode.neighbors.Remove(unwalkableNeighbor);
+                    }
+
+                }
+            }
         }
         else
             Debug.Log("Walkable Graph is null");
