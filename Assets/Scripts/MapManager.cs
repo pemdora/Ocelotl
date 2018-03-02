@@ -94,6 +94,7 @@ public class MapManager : MonoBehaviour
     [Header("Goal")]
     public Transform goal;
     private List<Vector3> goalList;
+    private List<Vector3> startList;
 
     [Header("Wall Prefab")]
     public GameObject wall;
@@ -132,6 +133,7 @@ public class MapManager : MonoBehaviour
     private void Start()
     {
         #region Instanciate maps
+        #region Initializing objects
         this.mapList = new List<int[,]>();
         mapList.Add(map1Array);
         mapList.Add(map2Array);
@@ -142,19 +144,23 @@ public class MapManager : MonoBehaviour
         walkableGraph = new List<GraphTile>();
         obstacleGraph1 = new List<GraphTile>();
         obstacleGraph2 = new List<GraphTile>();
+
         // Get child elements from map object
         floormap = new List<Transform>();
         for (int i = 0; i < floor.childCount; i++)
         {
             floormap.Add(floor.GetChild(i));
         }
+        #endregion
 
+
+        // Building walls and graphs
         for (int i = 0; i < arraylength; i++) // x values
         {
             for (int j = 0; j < arraylength; j++) // z values
             {
-                // Map 1 
-                if (mapList[sublvl][i, j] == 1) // If we got a 1 => wall position in the map array
+                // 2 maps/sublvl
+                if (mapList[2*sublvl][i, j] == 1) // If we got a 1 => wall position in the map array
                 {
                     // Instanciate wall objects for 1st map
                     InstanciateWall(i, j, tilesMap1, map1);
@@ -167,7 +173,7 @@ public class MapManager : MonoBehaviour
                 }
 
                 // Map 2
-                if (mapList[sublvl + 1][i, j] == 1)
+                if (mapList[2*sublvl+1][i, j] == 1)
                 {
                     // Instanciate wall objects for 2d map
                     InstanciateWall(i, j, tilesMap2, map2);
@@ -190,6 +196,7 @@ public class MapManager : MonoBehaviour
         }
         else
         {
+            Debug.Log("Start tile wasn't in graph");
             GraphTile tile = new GraphTile(0, 0)
             {
                 TileGameObject = floormap.Find(obj => obj.position.x == 0 && obj.position.z == 0)
@@ -202,13 +209,12 @@ public class MapManager : MonoBehaviour
         this.goalList = new List<Vector3>();
         goalList.Add(new Vector3(7, 0, 7));
         goalList.Add(new Vector3(0, 0, 7));
-        this.goal.transform.position = goalList[sublvl / 2];
+        this.goal.transform.position = goalList[sublvl]; // there are 
 
-        endTile = walkableGraph.Find(item => (item.x == goalList[sublvl / 2].x) && (item.z == goalList[sublvl / 2].z));
+        endTile = walkableGraph.Find(item => (item.x == goalList[sublvl].x) && (item.z == goalList[sublvl].z));
         #endregion
 
-        // Get Neighbors for walkable tile
-        Debug.Log(walkableGraph.Count);
+        // Get Neighbors for walkable tiles
         foreach (GraphTile tempTile in walkableGraph)
         {
             GetNeighbors(walkableGraph, tempTile);
@@ -343,6 +349,7 @@ public class MapManager : MonoBehaviour
 
     /// <summary>
     /// Chack if a shortest path exists in the graph of walkable tile
+    /// Applying A star without time calculation (breadth First search)
     /// </summary>
     /// <returns>Return true if a path exists or false if not</returns>
     public bool ShortestPath()
@@ -405,7 +412,11 @@ public class MapManager : MonoBehaviour
         return false;
     }
 
-
+    /// <summary>
+    /// Retrieve a list of node from start to end node to get the solution
+    /// Also showing the answer in green
+    /// </summary>
+    /// <returns>Return true if a path exists or false if not</returns>
     public void Reconstruct_path(GraphTile startNode, GraphTile endNode)
     {
         List<GraphTile> solution = new List<GraphTile>();
@@ -421,7 +432,6 @@ public class MapManager : MonoBehaviour
         solution.Add(startNode);
         solution.Reverse();
     }
-
 
     /// <summary>
     /// Get Neighbors for a node in a list of GraphTile
@@ -483,14 +493,12 @@ public class MapManager : MonoBehaviour
                 {
                     if (graph.Exists(item => (item.x == (wallNode.x + i)) && (item.z == wallNode.z))) // if an adjacent neighbor exists in the given graph
                     {
-                        Debug.Log("Removed");
                         // we remove the unwalkable neighbors tile
                         GraphTile unwalkableNeighbor = walkableGraph.Find(item => (item.x == (wallNode.x + i)) && (item.z == wallNode.z));
                         walkableNode.neighbors.Remove(unwalkableNeighbor);
                     }
                     if (graph.Exists(item => (item.x == (wallNode.x)) && (item.z == wallNode.z + i))) // if an adjacent neighbor exists in the given graph
                     {
-                        Debug.Log("Removed");
                         GraphTile unwalkableNeighbor = walkableGraph.Find(item => (item.x == wallNode.x) && (item.z == wallNode.z + i));
                         walkableNode.neighbors.Remove(unwalkableNeighbor);
                     }

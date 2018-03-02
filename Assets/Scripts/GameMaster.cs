@@ -10,7 +10,7 @@ using TMPro;
 /// </summary>
 public class GameMaster : MonoBehaviour {
 
-    public static int MAXLVL = 4;
+    public static int MAXLVL = 2;
 
     [Header("UI Elements variables")]
     public GameObject retryUI;
@@ -79,7 +79,7 @@ public class GameMaster : MonoBehaviour {
         finishUI.SetActive(true);
         float time = Mathf.Floor(Time.time - elapsedTime);
         timeFinish.text = time.ToString();
-        MapManager.sublvl += 2;
+        MapManager.sublvl++;
         if (MapManager.sublvl != MAXLVL)
         {
             IEnumerator coroutine = WaitAndLoadScene();

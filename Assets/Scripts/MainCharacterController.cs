@@ -148,7 +148,6 @@ public class MainCharacterController : MonoBehaviour
         agent.CalculatePath(target, path);
         if (path.status == NavMeshPathStatus.PathInvalid)
         {
-            Debug.Log("no");
             return false;
         }
         else
