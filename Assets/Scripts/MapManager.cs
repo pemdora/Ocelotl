@@ -190,9 +190,12 @@ public class MapManager : MonoBehaviour
 
         #region Manualy defining start and goal points
         //Start Point
-        if (walkableGraph.Exists(item => (item.x == 0) && (item.z == 0))) // if startTile already exist in walkableGraph
+        this.startList = new List<Vector3>();
+        goalList.Add(new Vector3(0, 0, 0));
+        goalList.Add(new Vector3(0, 0, 0));
+        if (walkableGraph.Exists(item => (item.x == startList[sublvl].x) && (item.z == startList[sublvl].z))) // if startTile already exist in walkableGraph
         {
-            startTile = walkableGraph.Find(item => (item.x == 0) && (item.z == 0));
+            startTile = walkableGraph.Find(item => (item.x == startList[sublvl].x) && (item.z == startList[sublvl].z));
         }
         else
         {
@@ -209,7 +212,7 @@ public class MapManager : MonoBehaviour
         this.goalList = new List<Vector3>();
         goalList.Add(new Vector3(7, 0, 7));
         goalList.Add(new Vector3(0, 0, 7));
-        this.goal.transform.position = goalList[sublvl]; // there are 
+        this.goal.transform.position = goalList[sublvl];
 
         endTile = walkableGraph.Find(item => (item.x == goalList[sublvl].x) && (item.z == goalList[sublvl].z));
         #endregion
