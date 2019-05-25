@@ -8,9 +8,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f98f4af23a154874fb8c2b75ddf66659, type: 3}
-  m_Name: level1
+  m_Script: {fileID: 11500000, guid: 9a9733c9dfbc34a4ea5d67e2c86af82f, type: 3}
+  m_Name: Maps SubLevel1
   m_EditorClassIdentifier: 
-  subLevelList:
-  - {fileID: 11400000, guid: 31d4de5a5cbb25d43a25606810d0033c, type: 2}
-  - {fileID: 11400000, guid: f82c51e35c673e144bad1d6f546503af, type: 2}
+  arraylength: 8
+  level: 1
+  submapLevel: 0
+  startPoint: {x: 0, y: 0, z: 0}
+  goalPoint: {x: 7, y: 0, z: 7}

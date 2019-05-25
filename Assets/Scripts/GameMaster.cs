@@ -11,7 +11,7 @@ using System.Collections.Generic;
 public class GameMaster : MonoBehaviour {
 
     public const int MAXSUBLVL = 2;
-    public static int lvl = 0;
+    public static int lvl = 99;
 
     [Header("UI Elements variables")]
     public GameObject retryUI;
@@ -73,7 +73,10 @@ public class GameMaster : MonoBehaviour {
     /// </summary>
     public void Retry()
     {
-        SceneManager.LoadScene(lvl+1); // Reload lvl
+        if(lvl>=1)
+            SceneManager.LoadScene(2); // Reload lvl
+        else
+            SceneManager.LoadScene(lvl+1); // Reload lvl
         GameMaster.retry = true; // Tell the class that we have retried (so the next scene can display retry UI)
     }
 
