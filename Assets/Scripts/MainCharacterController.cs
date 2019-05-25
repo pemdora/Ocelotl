@@ -15,14 +15,14 @@ using UnityEngine.AI;
 public class MainCharacterController : MonoBehaviour
 {
 
-    private  static bool mouseLock = true;
+    private static bool mouseLock = true;
+    private Vector3 front, back, left, right;
     private NavMeshAgent agent;
     public bool lockControls;
 
     #region PositionVariables
     private Vector3 characterPos;
     private Vector3 targetPosition;
-    public bool canMove;
     #endregion
 
     #region AnimationVariables
@@ -39,7 +39,7 @@ public class MainCharacterController : MonoBehaviour
     public static event PressingEnter PressingEnterEvent;
     private bool hasfinished;
     #endregion
-
+    
     public static MainCharacterController characterController;
     //SINGLETON
     /// <summary>
@@ -70,9 +70,14 @@ public class MainCharacterController : MonoBehaviour
 
         speed = 2f;
         animator = GetComponent<Animator>();
-        canMove = true;
         hasfinished = false;
         lockControls = false; // player can move at the begining at the level
+
+        front = Vector3.forward;
+        back = Vector3.back;
+        left = Vector3.left;
+        right = Vector3.right;
+
     }
 
     /// <summary>
@@ -80,32 +85,63 @@ public class MainCharacterController : MonoBehaviour
     /// </summary>
     private void GetMovementInput()
     {
-        if (canMove)
-        {
             if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
             {
-                targetPosition = characterPos + Vector3.back;
+                targetPosition = characterPos + back;
                 LookAt(targetPosition);
                 CanMoveFoward(targetPosition);
             }
             else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Z))  // else if because we cannot move in both Vertical et Horizontal axis 
             {
-                targetPosition = characterPos + Vector3.forward;
+                targetPosition = characterPos + front;
                 LookAt(targetPosition);
                 CanMoveFoward(targetPosition);
             }
             else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.Q))
             {
-                targetPosition = characterPos + Vector3.left;
+                targetPosition = characterPos + left;
                 LookAt(targetPosition);
                 CanMoveFoward(targetPosition);
             }
             else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
             {
-                targetPosition = characterPos + Vector3.right;
+                targetPosition = characterPos + right;
                 LookAt(targetPosition);
                 CanMoveFoward(targetPosition);
             }
+    }
+
+    public void ChangeAxis(char upkeyAxis)
+    {
+        switch (upkeyAxis)
+        {
+            case 'f': // front : default camera axis
+                front = Vector3.forward;
+                back = Vector3.back;
+                left = Vector3.left;
+                right = Vector3.right;
+                break;
+            case 'b': // back : camera turned 2 times
+                // if the players enter up arrow it will move along -z axis
+                front = Vector3.back;
+                back = Vector3.forward;
+                left = Vector3.right;
+                right = Vector3.left;
+                break;
+            case 'r': // right
+                // if the players enter up arrow it will move along +X axis
+                front = Vector3.right;
+                back = Vector3.left;
+                left = Vector3.forward;
+                right = Vector3.back;
+                break;
+            case 'l': // left 
+                // if the players enter up arrow it will move along -X axis
+                front = Vector3.left;
+                back = Vector3.right;
+                left = Vector3.back;
+                right = Vector3.forward;
+                break;
         }
     }
 

@@ -55,7 +55,10 @@ public class AudioManager : MonoBehaviour
     /// <param name = volume> float volume </param>
     public void ChangeVolume(float volume)
     {
-        audioMixer.SetFloat("volume", volume);
+        if(volume>-50) // From -50db the sound is already very low
+            audioMixer.SetFloat("volume", volume);
+        else
+            audioMixer.SetFloat("volume", -90);
     }
 
     /// <summary>

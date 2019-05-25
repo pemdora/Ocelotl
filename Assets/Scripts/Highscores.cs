@@ -14,6 +14,13 @@ public class Highscores : MonoBehaviour
     public List<Highscore>[] highscoresByLvl; // Array of highscores list, highscoresByLvl[0] will be the highscores list of level 1
     DisplayHighscores highscoresDisplay;
 
+    public static Highscores highscoreManager;
+
+    //SINGLETON
+    /// <summary>
+    /// Initialize singleton instance and variables
+    /// </summary> 
+
     private void Awake()
     {/*
         AddNewHighscore("Tara", 1, 100);
@@ -22,11 +29,22 @@ public class Highscores : MonoBehaviour
         AddNewHighscore("C", 2, 120);
         AddNewHighscore("B", 2, 100);
         AddNewHighscore("A", 2, 90);
-        DownloadHighscores();*/
+        */
+
         highscoresDisplay = GetComponent<DisplayHighscores>();
+
+        if (highscoreManager != null)
+        {
+            Debug.LogError("More than one Highscoreinstance in scene");
+            return;
+        }
+        else
+        {
+            highscoreManager = this;
+        }
     }
 
-    private void AddNewHighscore(string username, int lvl, int time)
+    public void AddNewHighscore(string username, int lvl, float time)
     {
         StartCoroutine(UploadNewHighscore(username, lvl, time));
     }
@@ -38,9 +56,9 @@ public class Highscores : MonoBehaviour
     /// <param name = lvl > Level played </param>
     /// <param name = time > Score of the player </param>
     /// <returns> Return an IEnumerator because web request is asynchronous (means that it is not instantaneous) </returns>
-    private IEnumerator UploadNewHighscore(string username, int lvl, int time)
+    private IEnumerator UploadNewHighscore(string username, int lvl, float time)
     {
-        WWW www = new WWW(webURL + privateCode + "/add/" + WWW.EscapeURL(username) + "|" + lvl + "/" + (1000-time) + "/" + time);
+        WWW www = new WWW(webURL + privateCode + "/add/" + WWW.EscapeURL(username) + "|" + lvl + "/" + (1000-(int)time) + "/" + time);
         yield return www;
 
         if (string.IsNullOrEmpty(www.error))
@@ -85,7 +103,7 @@ public class Highscores : MonoBehaviour
             string username = entryInfo[0];
             int lvl = int.Parse(entryInfo[1]);
             int time = int.Parse(entryInfo[3]);
-
+            
             highscoresByLvl[lvl - 1].Add(new Highscore(username, lvl, time));
         }
     }

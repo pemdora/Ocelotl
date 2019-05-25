@@ -2,6 +2,7 @@
 using UnityEngine.SceneManagement;
 using System.Collections;
 using TMPro;
+using System.Collections.Generic;
 
 /// <summary>
 /// Class responsible for GameOver and Success
@@ -9,13 +10,15 @@ using TMPro;
 /// </summary>
 public class GameMaster : MonoBehaviour {
 
-    public static int MAXLVL = 2;
+    public const int MAXSUBLVL = 2;
+    public static int lvl = 1;
 
     [Header("UI Elements variables")]
     public GameObject retryUI;
     public static bool retry = false; // for 1st loading, we don't want to display "retry" txt
     public GameObject finishUI;
-
+    public List<GameObject> imgLvl;
+    public List<GameObject> mapLvlIcon;
 
     public static float elapsedTime = 0; // we wan't to get the time spend on menu
     public TextMeshProUGUI timeFinish;
@@ -27,8 +30,9 @@ public class GameMaster : MonoBehaviour {
     /// </summary> 
     private void Awake()
     {
-        Debug.Log("Time" + (Time.time));
-        Debug.Log("Start Time"+(Time.time - elapsedTime));
+
+        // Debug.Log("Time" + (Time.time));
+        // Debug.Log("Start Time"+(Time.time - elapsedTime));
         if (gameMasterinstance != null)
         {
             Debug.LogError("More than one gameMasterinstance in scene");
@@ -39,6 +43,14 @@ public class GameMaster : MonoBehaviour {
             gameMasterinstance = this;
         }
     }
+
+    private void Start()
+    {
+        imgLvl[MapManager.sublvl].SetActive(true);
+        mapLvlIcon[MapManager.mapInstance.GetActiveMap() - 1].SetActive(true);
+    }
+
+
 
     /// <summary>
     /// Function called when the object becomes enabled and active
@@ -58,15 +70,28 @@ public class GameMaster : MonoBehaviour {
         MainCharacterController.OnWallCollisionEvent -= Retry;
         MainCharacterController.ReachedGoalEvent -= LevelFinished;
     }
-
+    
     /// <summary>
     /// Function called when OnCollision broadcast a signal
     /// </summary>
     public void Retry()
     {
-        SceneManager.LoadScene(1); // Reload 1st lvl
+        SceneManager.LoadScene(lvl+1); // Reload lvl
         GameMaster.retry = true; // Tell the class that we have retried (so the next scene can display retry UI)
     }
+
+    /// <summary>
+    /// Function called when user swaps maps
+    /// </summary>
+    public void ChangeMapIcon()
+    {
+        foreach (GameObject icon in mapLvlIcon)
+        {
+            icon.SetActive(false);
+        }
+        mapLvlIcon[MapManager.mapInstance.GetActiveMap()-1].SetActive(true);
+    }
+
 
     /// <summary>
     /// Finishing level if the player has reached goal
@@ -78,11 +103,19 @@ public class GameMaster : MonoBehaviour {
         finishUI.SetActive(true);
         float time = Mathf.Floor(Time.time - elapsedTime);
         timeFinish.text = time.ToString();
+        // Send Highscore from level 1
+        if(lvl>0)
+            Highscores.highscoreManager.AddNewHighscore(Menu.playerName, lvl + MapManager.sublvl, (int)time); // MapManager.sublvl begins at 0
         MapManager.sublvl++;
-        if (MapManager.sublvl != MAXLVL)
+        if (MapManager.sublvl != MAXSUBLVL && lvl != 0)
         {
             IEnumerator coroutine = WaitAndLoadScene();
             StartCoroutine(coroutine);
+        }
+        else // Full Lvl finished
+        {
+            MapManager.sublvl = 0;
+            GameMaster.retry = false;
         }
     }
 
@@ -95,7 +128,7 @@ public class GameMaster : MonoBehaviour {
         yield return new WaitForSeconds(2f);
         #region WaitAndDo // this will be executed only when the coroutine have finished
         elapsedTime = Time.time - elapsedTime; // reset timer
-        SceneManager.LoadScene(1); // Reload 1st lvl
+        SceneManager.LoadScene(lvl+1); // Reload 1st lvl
         GameMaster.retry = false;
         #endregion
     }

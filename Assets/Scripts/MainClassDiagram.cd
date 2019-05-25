@@ -1,28 +1,108 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="MainCharacterController">
+  <Class Name="MainCharacterController" Collapsed="true">
     <Position X="1" Y="0.5" Width="2" />
+    <NestedTypes>
+      <Delegate Name="MainCharacterController.WallCollision" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scripts\MainCharacterController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="MainCharacterController.ReachedGoal" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scripts\MainCharacterController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="MainCharacterController.PressingEnter" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scripts\MainCharacterController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAQBEAAAACAAAQCgEAAAAABAAAAAIQAIAgCBAAAAAAI=</HashCode>
+      <HashCode>BAQBMAEAADAAAQAAkAIAAABAEAAIIQJJAACBAAIAgEI=</HashCode>
       <FileName>Assets\Scripts\MainCharacterController.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="MapManager">
+  <Class Name="MapManager" Collapsed="true">
     <Position X="4" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BAQAAAAAACCRYAAAAAAAAAAAABAAAAAAAAAAAAAAAEA=</HashCode>
+      <HashCode>hgQAAkMAACCRYAAABQgIITAAABAABgCOAIg8AAABDEg=</HashCode>
       <FileName>Assets\Scripts\MapManager.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="mapInstance" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="TileBlock">
-    <Position X="7" Y="0.5" Width="1.5" />
+  <Class Name="AudioManager" Collapsed="true">
+    <Position X="7.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAABAAQAAAAA=</HashCode>
-      <FileName>Assets\Scripts\TileBlock.cs</FileName>
+      <HashCode>AAAAEAAAACAAAAAAAAAIAgAAAAAAAAAAAACgAAAEAEE=</HashCode>
+      <FileName>Assets\Scripts\AudioManager.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="CameraManager" Collapsed="true">
+    <Position X="3.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAEECAEAAAAAQAAAAACAAAAQBAAAAAAACAAAAAAEI=</HashCode>
+      <FileName>Assets\Scripts\CameraManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DisplayHighscores" Collapsed="true">
+    <Position X="1" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAACAAAiAAAACAAAACAAAAAAAABCAAAAAAIAA=</HashCode>
+      <FileName>Assets\Scripts\DisplayHighscores.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameMaster" Collapsed="true">
+    <Position X="0.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQABAAkAXAAAADAAAAAAAAAAAAAiAAIACGAAAAACEE=</HashCode>
+      <FileName>Assets\Scripts\GameMaster.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GraphTile" Collapsed="true">
+    <Position X="3.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAEAAgAAQAAAAAAAAAAgAAAAAABAAQAAAAA=</HashCode>
+      <FileName>Assets\Scripts\GraphTile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Highscores" Collapsed="true">
+    <Position X="5.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAIIAAAAAAgAAABgAAAAAAACACAAAAAAAAIBBEA=</HashCode>
+      <FileName>Assets\Scripts\Highscores.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Menu" Collapsed="true">
+    <Position X="6.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAABAAACBAAAAAAAEAAIAQAAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Menu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpriteOpacity" Collapsed="true">
+    <Position X="7.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\SpriteOpacity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TutorialAnim" Collapsed="true">
+    <Position X="8.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQQEEACQCAAAAAAAAAAAAAAAABgAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>Assets\Scripts\TutorialAnim.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Highscore" Collapsed="true">
+    <Position X="5.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAEAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Highscores.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

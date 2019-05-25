@@ -40,8 +40,12 @@ public class GraphTile
     {
         if (this.tileGameObject != null)
         {
-            Renderer render = this.tileGameObject.GetComponent<Renderer>();
-            render.material.color = Color.cyan;
+            Animator animator = this.tileGameObject.GetComponent<Animator>();
+            if (animator.gameObject.activeSelf)
+            {
+                animator.SetTrigger("soluce");
+            }
+            
         }
     }
 
