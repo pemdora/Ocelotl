@@ -22,29 +22,16 @@ public class MapManager : MonoBehaviour
     private List<Transform> tilesMap2;
     private bool map2active;
     #endregion
+    
+
+
+    [SerializeField]
+    private LevelData leveldata;
+
     #region Maps in Array
-    // Array map (lighter than storing with list of game objects)
-    public int[,] map1TutoArray = new int[8, 8] { // map of 8 line and 8 colums
-        { 0, 0, 1, 0, 1, 0, 0, 0 },
-        { 0, 0, 1, 0, 1, 0, 0, 0 },
-        { 1, 1, 1, 0, 1, 0, 1, 0 },
-        { 0, 0, 0, 0, 1, 0, 1, 1 },
-        { 1, 1, 0, 0, 0, 0, 0, 0 },
-        { 0, 1, 0, 0, 0, 0, 0, 0 },
-        { 0, 1, 0, 1, 1, 1, 1, 1 },
-        { 0, 1, 1, 1, 0, 0, 0, 0 }
-    };
-    public int[,] map2TutoArray = new int[8, 8] { // map of 8 line and 8 colums
-        { 0, 0, 0, 0, 1, 1, 0, 0 },
-        { 1, 1, 1, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 1, 0, 0, 1, 1 },
-        { 1, 0, 1, 0, 1, 1, 1, 0 },
-        { 0, 1, 0, 0, 0, 0, 0, 0 },
-        { 0, 0, 1, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 1, 1, 1, 1, 1 },
-        { 0, 0, 0, 0, 0, 0, 0, 0 }
-    };
     public int[,] map1Array = new int[8, 8] { // map of 8 line and 8 colums
+        //Start at v point
+        //v
         { 0, 0, 1, 1, 0, 0, 1, 0 },
         { 0, 1, 0, 0, 1, 1, 0, 0 },
         { 1, 1, 1, 0, 0, 1, 0, 1 },
@@ -52,7 +39,7 @@ public class MapManager : MonoBehaviour
         { 0, 1, 0, 0, 0, 0, 0, 1 },
         { 1, 1, 1, 0, 1, 1, 1, 1 },
         { 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 1, 0, 0, 1, 1, 0 }
+        { 1, 0, 1, 0, 0, 1, 1, 0 } // end
     };
     public int[,] map2Array = new int[8, 8] { // map of 8 line and 8 colums
         { 0, 0, 0, 1, 1, 0, 1, 0 },
@@ -84,6 +71,8 @@ public class MapManager : MonoBehaviour
         { 1, 1, 0, 0, 0, 0, 1, 1 },
         { 0, 0, 1, 0, 0, 0, 0, 0 }
     };
+    public int[,] map1ArrayProc = new int[8, 8];
+    public int[,] map2ArrayProc = new int[8, 8];
     #endregion
     public bool mapSwap;
     private List<int[,]> mapList;
@@ -132,12 +121,14 @@ public class MapManager : MonoBehaviour
     private void Start()
     {
         #region Instanciate maps
-        #region Initializing objects
         this.mapList = new List<int[,]>();
         mapList.Add(map1Array);
         mapList.Add(map2Array);
         mapList.Add(map3Array);
         mapList.Add(map4Array);
+        mapList.Add(map1ArrayProc);
+        mapList.Add(map2ArrayProc);
+
         tilesMap1 = new List<Transform>();
         tilesMap2 = new List<Transform>();
         walkableGraph = new List<GraphTile>();
@@ -153,67 +144,107 @@ public class MapManager : MonoBehaviour
         #endregion
 
 
+        //CreateRandomGraph();
+
+        // Init map
+        foreach (MapDuoData maps in leveldata.subLevelList)
+        {
+            maps.InitMap();
+        }
+
         // Building walls and graphs
         for (int i = 0; i < arraylength; i++) // x values
         {
             for (int j = 0; j < arraylength; j++) // z values
             {
-                if (GameMaster.lvl == 0)
+                switch (GameMaster.lvl)
                 {
-                    // 2 maps
-                    if (map1TutoArray[i, j] == 1) 
-                    {
-                        // Instanciate wall objects for 1st map
-                        InstanciateWall(i, 0, j, tilesMap1, map1);
-                        GraphTile tile = new GraphTile(i, j);
-                        obstacleGraph1.Add(tile);
-                    }
-                    else // its a walkable tile
-                    {
-                        CheckAndAddGraphTile(i, j);
-                    }
+                    case 0:
+                        // 2 maps
 
-                    // Map 2
-                    if (map2TutoArray[i, j] == 1)
-                    {
-                        // Instanciate wall objects for 2d map
-                        InstanciateWall(i, -5.5f, j, tilesMap2, map2);
-                        GraphTile tile = new GraphTile(i, j);
-                        obstacleGraph2.Add(tile);
-                    }
-                    else
-                    {
-                        CheckAndAddGraphTile(i, j);
-                    }
-                }
-                else
-                {
-                    // 2 maps/sublvl
-                    if (mapList[2 * sublvl][i, j] == 1) // If we got a 1 => wall position in the map array
-                    {
-                        // Instanciate wall objects for 1st map
-                        InstanciateWall(i, 0, j, tilesMap1, map1);
-                        GraphTile tile = new GraphTile(i, j);
-                        obstacleGraph1.Add(tile);
-                    }
-                    else // its a walkable tile
-                    {
-                        CheckAndAddGraphTile(i, j);
-                    }
+                        // Map 1
+                        if (leveldata.subLevelList[0].map1[i, j] == 1)
+                        {
+                            // Instanciate wall objects for 1st map
+                            InstanciateWall(i, 0, j, tilesMap1, map1);
+                            GraphTile tile = new GraphTile(i, j);
+                            obstacleGraph1.Add(tile);
+                        }
+                        else // its a walkable tile
+                        {
+                            CheckAndAddGraphTile(i, j);
+                        }
 
-                    // Map 2
-                    if (mapList[2 * sublvl + 1][i, j] == 1)
-                    {
-                        // Instanciate wall objects for 2d map
-                        InstanciateWall(i, -5.5f, j, tilesMap2, map2);
-                        GraphTile tile = new GraphTile(i, j);
-                        obstacleGraph2.Add(tile);
-                    }
-                    else
-                    {
-                        CheckAndAddGraphTile(i, j);
-                    }
+                        // Map 2
+                        if (leveldata.subLevelList[0].map1[i, j] == 1)
+                        {
+                            // Instanciate wall objects for 2d map
+                            InstanciateWall(i, -5.5f, j, tilesMap2, map2);
+                            GraphTile tile = new GraphTile(i, j);
+                            obstacleGraph2.Add(tile);
+                        }
+                        else
+                        {
+                            CheckAndAddGraphTile(i, j);
+                        }
+                        break;
+                    case 1:
+                        // 2 maps/sublvl
+                        if (mapList[2 * sublvl][i, j] == 1) // If we got a 1 => wall position in the map array
+                        {
+                            // Instanciate wall objects for 1st map
+                            InstanciateWall(i, 0, j, tilesMap1, map1);
+                            GraphTile tile = new GraphTile(i, j);
+                            obstacleGraph1.Add(tile);
+                        }
+                        else // its a walkable tile
+                        {
+                            CheckAndAddGraphTile(i, j);
+                        }
+
+                        // Map 2
+                        if (mapList[2 * sublvl + 1][i, j] == 1)
+                        {
+                            // Instanciate wall objects for 2d map
+                            InstanciateWall(i, -5.5f, j, tilesMap2, map2);
+                            GraphTile tile = new GraphTile(i, j);
+                            obstacleGraph2.Add(tile);
+                        }
+                        else
+                        {
+                            CheckAndAddGraphTile(i, j);
+                        }
+                        break;
+                    case 99:
+                        // 2 maps/sublvl
+
+                        if (map1ArrayProc[i, j] == 1) // If we got a 1 => wall position in the map array
+                        {
+                            // Instanciate wall objects for 1st map
+                            InstanciateWall(i, 0, j, tilesMap1, map1);
+                            GraphTile tile = new GraphTile(i, j);
+                            obstacleGraph1.Add(tile);
+                        }
+                        else // its a walkable tile
+                        {
+                            CheckAndAddGraphTile(i, j);
+                        }
+
+                        // Map 2
+                        if (map2ArrayProc[i, j] == 1)
+                        {
+                            // Instanciate wall objects for 2d map
+                            InstanciateWall(i, -5.5f, j, tilesMap2, map2);
+                            GraphTile tile = new GraphTile(i, j);
+                            obstacleGraph2.Add(tile);
+                        }
+                        else
+                        {
+                            CheckAndAddGraphTile(i, j);
+                        }
+                        break;
                 }
+
             }
         }
 
@@ -252,7 +283,6 @@ public class MapManager : MonoBehaviour
         {
             GetNeighbors(walkableGraph, tempTile);
         }
-        #endregion
 
         // Remove unwalkable neighbors tile in walkable graph
         foreach (GraphTile tempTile in obstacleGraph1)
@@ -359,11 +389,8 @@ public class MapManager : MonoBehaviour
             Animator animator = wallTile.GetComponent<Animator>();
             animator.SetTrigger("FadeOut");
             Transform floorTile = floormap.Find(tileFinding => (tileFinding.position.x == wallTile.position.x && tileFinding.position.z == wallTile.position.z));
-            if(floorTile != null)
-            {
-                floorTile.gameObject.SetActive(false);
-                floorMapToActivate.Add(floorTile);
-            }
+            floorTile.gameObject.SetActive(false);
+            floorMapToActivate.Add(floorTile);
         }
         yield return new WaitForSeconds(0.8f);
         #region WaitAndDo // this will be executed only when the coroutine have finished
@@ -610,5 +637,76 @@ public class MapManager : MonoBehaviour
         }
         else
             Debug.Log("Walkable Graph is null");
+    }
+
+    /// <summary>
+    /// Get Neighbors for a node in a list of GraphTile
+    /// </summary>
+    /// <param name = graph > List of nodes (GraphTile).</param>
+    /// <param name = node > Node given to search neighbors .</param>
+    private void CreateRandomGraph()
+    {
+        map1ArrayProc = new int[8, 8];
+        map2ArrayProc = new int[8, 8];
+
+        System.Random r = new System.Random(DateTime.Now.Millisecond);
+        System.Random r2 = new System.Random(DateTime.Now.Millisecond+42);
+
+        int ite = 0;
+        while (ite<20)
+        {
+            for (int i = 0; i < map1ArrayProc.GetLength(0); i++)
+            {
+                for (int j = 0; j < map1ArrayProc.GetLength(1); j++)
+                {
+                    int rInt = r.Next(0, 2);  //Return a random float number between min [inclusive] and max [exclusive]
+                                              //int value = (new UnityEngine.Random.Range(0, 1) > 0.5f) ? 0 : 1;
+                    map1ArrayProc[i, j] = rInt;
+
+                    rInt = r2.Next(0, 2);  //Return a random float number between min [inclusive] and max [exclusive]
+                    map2ArrayProc[i, j] = rInt;
+                }
+            }
+            for (int i = 0; i < map1ArrayProc.GetLength(0); i++)
+            {
+                for (int j = 0; j < map1ArrayProc.GetLength(1); j++)
+                {
+
+                    if (map1ArrayProc[i, j] == 1) // If we got a 1 => wall position in the map array
+                    {
+                        // Instanciate wall objects for 1st map
+                        //InstanciateWall(i, 0, j, tilesMap1, map1);
+                        GraphTile tile = new GraphTile(i, j);
+                        obstacleGraph1.Add(tile);
+                    }
+                    else // its a walkable tile
+                    {
+                        CheckAndAddGraphTile(i, j);
+                    }
+
+                    // Map 2
+                    if (map2ArrayProc[i, j] == 1)
+                    {
+                        // Instanciate wall objects for 2d map
+                        //InstanciateWall(i, -5.5f, j, tilesMap2, map2);
+                        GraphTile tile = new GraphTile(i, j);
+                        obstacleGraph2.Add(tile);
+                    }
+                    else
+                    {
+                        CheckAndAddGraphTile(i, j);
+                    }
+                }
+            }
+
+            ite++;
+
+            if (ShortestPath() == true)
+                break;
+        }
+
+        map1ArrayProc[0, 0] = 0;
+        map2ArrayProc[0, 0] = 0;
+        map2ArrayProc[7, 7] = 0;
     }
 }

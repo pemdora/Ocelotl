@@ -11,7 +11,7 @@ using System.Collections.Generic;
 public class GameMaster : MonoBehaviour {
 
     public const int MAXSUBLVL = 2;
-    public static int lvl = 1;
+    public static int lvl = 0;
 
     [Header("UI Elements variables")]
     public GameObject retryUI;
@@ -49,9 +49,6 @@ public class GameMaster : MonoBehaviour {
         imgLvl[MapManager.sublvl].SetActive(true);
         mapLvlIcon[MapManager.mapInstance.GetActiveMap() - 1].SetActive(true);
     }
-
-
-
     /// <summary>
     /// Function called when the object becomes enabled and active
     /// </summary>
