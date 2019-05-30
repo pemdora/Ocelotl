@@ -49,10 +49,8 @@ public class GraphTile
     /// </summary>
     public void ChangeColor(List<Transform> floormap, MapManager.GroundColor color)
     {
-        Debug.Log("ChangeColor");
         if (this.tileGameObject != null)
         {
-            Debug.Log("LA MOR");
             Animator animator = this.tileGameObject.GetComponent<Animator>();
             if (animator.gameObject.activeSelf)
             {
@@ -62,16 +60,16 @@ public class GraphTile
         }
         else
         {
-            Transform tile = floormap.Find(obj => obj.position.x == 0 && obj.position.z == 0);
+            Transform tile = floormap.Find(obj => obj.position.x == x && obj.position.z == z );
             if (tile != null)
             {
-                Debug.Log("node : " + x + " " + z);
+                Debug.Log("node : " + x + " " + z + " "+tile.gameObject.name);
                 tileGameObject = tile;
                 Animator animator = this.tileGameObject.GetComponent<Animator>();
                 animator.SetTrigger(color.ToString());
             }
             else
-                Debug.Log("LA MOR");
+                Debug.Log("no tile");
         }
     }
 

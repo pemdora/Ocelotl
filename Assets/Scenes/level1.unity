@@ -17417,7 +17417,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   map1Transform: {fileID: 804992752}
   map2Transform: {fileID: 1669639645}
-  leveldata: {fileID: 11400000, guid: 1eaa3106d4e919e4ea727c36a33bfbcc, type: 2}
+  leveldatas:
+  - {fileID: 11400000, guid: 9704d5864843bd345896e925a1d31bed, type: 2}
+  - {fileID: 11400000, guid: 1eaa3106d4e919e4ea727c36a33bfbcc, type: 2}
   goal: {fileID: 524100849}
   wall: {fileID: 1654136378054878, guid: b75d18dbf6e47ea4a8647960ab90d43d, type: 2}
   floor: {fileID: 1884760504}
