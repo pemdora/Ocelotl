@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using UnityEngine.UI;
 
 /// <summary>
 /// Class responsible for Map controlls :
 /// </summary>
 public class MapManager : MonoBehaviour
 {
+    // DEBUG
+    [SerializeField]
+    private Text debugText;
 
     [Header("Maps variables")]
     private List<Transform> tilesMap; // Active map
@@ -175,32 +179,37 @@ public class MapManager : MonoBehaviour
 
     private void BuildGraph(int length, Vector3 start, Vector3 end)
     {
+        debugText.text = "";
         for (int i = 0; i < length; i++)
         {
             for (int j = 0; j < length; j++)
             {
                 if (map1[i, j] == 1 && map2[i, j] == 1) // cannot go through tile at any case
                 {
-                    break;
+                    debugText.text += "X ";
                 }
                 else if (map1[i, j] == 0 && map2[i, j] == 0) // always walkable without switching map
                 {
+                    debugText.text += "0 ";
                     GraphTile tile = new GraphTile(i, j, 0);
                     weightedGraph.Add(tile);
                 }
                 else if (map1[i, j] == 0 && map2[i, j] == 1)
                 {
+                    debugText.text += "1 ";
                     GraphTile tile = new GraphTile(i, j, 1);
                     weightedGraph.Add(tile);
                 }
                 else if (map1[i, j] == 1 && map2[i, j] == 0)
                 {
+                    debugText.text += "2 ";
                     GraphTile tile = new GraphTile(i, j, 2);
                     weightedGraph.Add(tile);
                 }
                 else
                     Debug.LogWarning("Error case not understood");
             }
+            debugText.text += "\n";
         }
 
         #region Set Start and end tiles
@@ -603,7 +612,7 @@ public class MapManager : MonoBehaviour
 
                     if (current.value == 1 && neighbor.value == 2 || current.value == 2 && neighbor.value == 1)
                     {
-                        break;
+                        continue;
                     }
                     else
                     {
@@ -740,7 +749,6 @@ public class MapManager : MonoBehaviour
     /// <param name = node > Node given to search neighbors .</param>
     private bool CreateRandomGraph()
     {
-        Debug.Log(1);
         map1 = new int[8,8];
         map2 = new int[8,8];
 
@@ -749,7 +757,6 @@ public class MapManager : MonoBehaviour
 
         int ite = 0;
         int lenght = map1.GetLength(0);
-        Debug.Log(lenght);
         while (ite < 200)
         {
             weightedGraph = new List<GraphTile>();
