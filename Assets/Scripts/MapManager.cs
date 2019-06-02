@@ -608,18 +608,10 @@ public class MapManager : MonoBehaviour
     {
         List<GraphTile> solution = new List<GraphTile>();
         GraphTile node = endNode;
-        int numberOfSwap = 0;
-        int currentNodeWeight = 1;
 
         // We will reconstruct the path from the end
         while (node != startNode && node.predecessor != null) //node.Predecessor != null
         {
-            if (node.value != 0 && currentNodeWeight != node.value)
-            {
-                currentNodeWeight = node.value;
-                numberOfSwap++;
-            }
-
             solution.Add(node);
             node = node.predecessor;
             node.ChangeColor(floormap, color);
