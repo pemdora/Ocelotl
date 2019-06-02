@@ -11,10 +11,10 @@ using System.Collections.Generic;
 public class GameMaster : MonoBehaviour {
 
     public const int MAXSUBLVL = 2;
-    public static int lvl = 1;
+    public static int lvl = 0;
 
     [Header("UI Elements variables")]
-    public GameObject retryUI;
+    public Animator retryUI;
     public static bool retry = false; // for 1st loading, we don't want to display "retry" txt
     public GameObject finishUI;
     public List<GameObject> imgLvl;
@@ -49,15 +49,13 @@ public class GameMaster : MonoBehaviour {
         imgLvl[MapManager.sublvl].SetActive(true);
         mapLvlIcon[MapManager.mapInstance.GetActiveMap() - 1].SetActive(true);
     }
-
-
-
     /// <summary>
     /// Function called when the object becomes enabled and active
     /// </summary>
     public void OnEnable()
     {
-        retryUI.SetActive(GameMaster.retry); // Activate Retry Ui, Animation will play on Entry
+        if(retry)
+            retryUI.SetTrigger("retry"); // Activate Retry Ui, Animation will play on Entry
         MainCharacterController.OnWallCollisionEvent += Retry; // Subscribing to OnCollision event
         MainCharacterController.ReachedGoalEvent += LevelFinished;
     }
@@ -76,8 +74,17 @@ public class GameMaster : MonoBehaviour {
     /// </summary>
     public void Retry()
     {
-        SceneManager.LoadScene(lvl+1); // Reload lvl
+        if(lvl>1)
+            SceneManager.LoadScene(3); // Reload lvl
+        else
+            SceneManager.LoadScene(lvl+1); // Reload lvl
         GameMaster.retry = true; // Tell the class that we have retried (so the next scene can display retry UI)
+    }
+
+    public void ReLoadRandomGeneration()
+    {
+        SceneManager.LoadScene(3); // Reload lvl
+        GameMaster.retry = false;
     }
 
     /// <summary>
@@ -98,16 +105,17 @@ public class GameMaster : MonoBehaviour {
     /// </summary>
     public void LevelFinished()
     {
-        Debug.Log("Finish" + (Time.time - elapsedTime));
+        //Debug.Log("Finish" + (Time.time - elapsedTime));
 
         finishUI.SetActive(true);
         float time = Mathf.Floor(Time.time - elapsedTime);
         timeFinish.text = time.ToString();
         // Send Highscore from level 1
-        if(lvl>0)
+        if(lvl>0 && lvl != 2)
             Highscores.highscoreManager.AddNewHighscore(Menu.playerName, lvl + MapManager.sublvl, (int)time); // MapManager.sublvl begins at 0
+
         MapManager.sublvl++;
-        if (MapManager.sublvl != MAXSUBLVL && lvl != 0)
+        if (MapManager.sublvl != MAXSUBLVL && lvl != 0 && lvl != 2)
         {
             IEnumerator coroutine = WaitAndLoadScene();
             StartCoroutine(coroutine);

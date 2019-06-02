@@ -3,97 +3,46 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using UnityEngine.UI;
 
 /// <summary>
 /// Class responsible for Map controlls :
 /// </summary>
 public class MapManager : MonoBehaviour
 {
+    // DEBUG
+    [SerializeField]
+    private Text debugText;
+    [SerializeField]
+    private Animator panelLevelGenFailed;
 
     [Header("Maps variables")]
     private List<Transform> tilesMap; // Active map
     #region map1
-    public Transform map1; // TileList
+    public Transform map1Transform; // TileList
     private List<Transform> tilesMap1;
     private bool map1active;
+    public int[,] map1;
     #endregion
+
     #region map2
-    public Transform map2; // TileList
+    public Transform map2Transform; // TileList
     private List<Transform> tilesMap2;
     private bool map2active;
+    public int[,] map2;
     #endregion
+
+    [SerializeField]
+    private List<LevelData> leveldatas;
+
     #region Maps in Array
-    // Array map (lighter than storing with list of game objects)
-    public int[,] map1TutoArray = new int[8, 8] { // map of 8 line and 8 colums
-        { 0, 0, 1, 0, 1, 0, 0, 0 },
-        { 0, 0, 1, 0, 1, 0, 0, 0 },
-        { 1, 1, 1, 0, 1, 0, 1, 0 },
-        { 0, 0, 0, 0, 1, 0, 1, 1 },
-        { 1, 1, 0, 0, 0, 0, 0, 0 },
-        { 0, 1, 0, 0, 0, 0, 0, 0 },
-        { 0, 1, 0, 1, 1, 1, 1, 1 },
-        { 0, 1, 1, 1, 0, 0, 0, 0 }
-    };
-    public int[,] map2TutoArray = new int[8, 8] { // map of 8 line and 8 colums
-        { 0, 0, 0, 0, 1, 1, 0, 0 },
-        { 1, 1, 1, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 1, 0, 0, 1, 1 },
-        { 1, 0, 1, 0, 1, 1, 1, 0 },
-        { 0, 1, 0, 0, 0, 0, 0, 0 },
-        { 0, 0, 1, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 1, 1, 1, 1, 1 },
-        { 0, 0, 0, 0, 0, 0, 0, 0 }
-    };
-    public int[,] map1Array = new int[8, 8] { // map of 8 line and 8 colums
-        { 0, 0, 1, 1, 0, 0, 1, 0 },
-        { 0, 1, 0, 0, 1, 1, 0, 0 },
-        { 1, 1, 1, 0, 0, 1, 0, 1 },
-        { 0, 1, 0, 1, 1, 1, 0, 0 },
-        { 0, 1, 0, 0, 0, 0, 0, 1 },
-        { 1, 1, 1, 0, 1, 1, 1, 1 },
-        { 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 1, 0, 0, 1, 1, 0 }
-    };
-    public int[,] map2Array = new int[8, 8] { // map of 8 line and 8 colums
-        { 0, 0, 0, 1, 1, 0, 1, 0 },
-        { 0, 1, 0, 1, 0, 1, 1, 1 },
-        { 1, 0, 1, 0, 1, 0, 1, 0 },
-        { 0, 1, 1, 0, 0, 0, 1, 0 },
-        { 0, 0, 1, 0, 1, 1, 1, 1 },
-        { 0, 0, 0, 1, 0, 0, 1, 0 },
-        { 0, 1, 1, 1, 1, 1, 0, 1 },
-        { 0, 1, 0, 0, 0, 1, 0, 0 }
-    };
-    public int[,] map3Array = new int[8, 8] { // map of 8 line and 8 colums
-        { 0, 1, 0, 1, 0, 0, 1, 0 },
-        { 0, 1, 0, 0, 1, 0, 1, 1 },
-        { 1, 0, 0, 1, 0, 1, 0, 0 },
-        { 0, 1, 0, 0, 1, 0, 1, 0 },
-        { 0, 1, 0, 1, 0, 1, 1, 0 },
-        { 0, 0, 1, 0, 0, 0, 1, 0 },
-        { 0, 0, 1, 0, 1, 0, 1, 0 },
-        { 0, 0, 1, 0, 1, 0, 1, 0 }
-    };
-    public int[,] map4Array = new int[8, 8] { // map of 8 line and 8 colums
-        { 1, 1, 0, 0, 0, 1, 0, 0 },
-        { 0, 0, 1, 0, 1, 0, 1, 0 },
-        { 0, 1, 0, 1, 0, 0, 1, 0 },
-        { 0, 0, 0, 1, 0, 0, 0, 1 },
-        { 1, 1, 0, 1, 0, 1, 1, 0 },
-        { 0, 0, 1, 0, 1, 0, 1, 0 },
-        { 1, 1, 0, 0, 0, 0, 1, 1 },
-        { 0, 0, 1, 0, 0, 0, 0, 0 }
-    };
     #endregion
-    public bool mapSwap;
-    private List<int[,]> mapList;
+
+    private bool mapSwap;
     public static int sublvl = 0;
-    public static int arraylength = 8; // Arrays are symetrics
 
     [Header("Goal")]
-    public Transform goal;
-    private List<Vector3> goalList;
-    private List<Vector3> startList;
+    public Transform goal; // Goal gameObject with particul system
 
     [Header("Wall Prefab")]
     public GameObject wall;
@@ -109,10 +58,10 @@ public class MapManager : MonoBehaviour
 
 
     public static MapManager mapInstance;
+    private List<GraphTile> weightedGraph; // Graph that contains map 1 and map 2 datas
+    public enum GroundColor { Green, StayGreen, Red, Yellow }
+
     //SINGLETON
-    /// <summary>
-    /// Initialize singleton instance
-    /// </summary>
     private void Awake()
     {
         if (mapInstance != null)
@@ -126,18 +75,9 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Initialize variables
-    /// </summary>
     private void Start()
     {
         #region Instanciate maps
-        #region Initializing objects
-        this.mapList = new List<int[,]>();
-        mapList.Add(map1Array);
-        mapList.Add(map2Array);
-        mapList.Add(map3Array);
-        mapList.Add(map4Array);
         tilesMap1 = new List<Transform>();
         tilesMap2 = new List<Transform>();
         walkableGraph = new List<GraphTile>();
@@ -151,132 +91,195 @@ public class MapManager : MonoBehaviour
             floormap.Add(floor.GetChild(i));
         }
         #endregion
+        
+        LevelData leveldata = leveldatas[0];  // GameMaster begins at level 0
 
-
-        // Building walls and graphs
-        for (int i = 0; i < arraylength; i++) // x values
+        if (GameMaster.lvl == 2) // Random generation
         {
-            for (int j = 0; j < arraylength; j++) // z values
+            if (!CreateRandomGraph())
             {
-                if (GameMaster.lvl == 0)
-                {
-                    // 2 maps
-                    if (map1TutoArray[i, j] == 1) 
-                    {
-                        // Instanciate wall objects for 1st map
-                        InstanciateWall(i, 0, j, tilesMap1, map1);
-                        GraphTile tile = new GraphTile(i, j);
-                        obstacleGraph1.Add(tile);
-                    }
-                    else // its a walkable tile
-                    {
-                        CheckAndAddGraphTile(i, j);
-                    }
-
-                    // Map 2
-                    if (map2TutoArray[i, j] == 1)
-                    {
-                        // Instanciate wall objects for 2d map
-                        InstanciateWall(i, -5.5f, j, tilesMap2, map2);
-                        GraphTile tile = new GraphTile(i, j);
-                        obstacleGraph2.Add(tile);
-                    }
-                    else
-                    {
-                        CheckAndAddGraphTile(i, j);
-                    }
-                }
-                else
-                {
-                    // 2 maps/sublvl
-                    if (mapList[2 * sublvl][i, j] == 1) // If we got a 1 => wall position in the map array
-                    {
-                        // Instanciate wall objects for 1st map
-                        InstanciateWall(i, 0, j, tilesMap1, map1);
-                        GraphTile tile = new GraphTile(i, j);
-                        obstacleGraph1.Add(tile);
-                    }
-                    else // its a walkable tile
-                    {
-                        CheckAndAddGraphTile(i, j);
-                    }
-
-                    // Map 2
-                    if (mapList[2 * sublvl + 1][i, j] == 1)
-                    {
-                        // Instanciate wall objects for 2d map
-                        InstanciateWall(i, -5.5f, j, tilesMap2, map2);
-                        GraphTile tile = new GraphTile(i, j);
-                        obstacleGraph2.Add(tile);
-                    }
-                    else
-                    {
-                        CheckAndAddGraphTile(i, j);
-                    }
-                }
+                panelLevelGenFailed.SetTrigger("Failed");
             }
-        }
-
-
-        #region Manualy defining start and goal points
-        //Start Point
-        this.startList = new List<Vector3>();
-        startList.Add(new Vector3(0, 0, 0));
-        startList.Add(new Vector3(0, 0, 0));
-        if (walkableGraph.Exists(item => (item.x == startList[sublvl].x) && (item.z == startList[sublvl].z))) // if startTile already exist in walkableGraph
-        {
-            startTile = walkableGraph.Find(item => (item.x == startList[sublvl].x) && (item.z == startList[sublvl].z));
         }
         else
         {
-            Debug.Log("Start tile wasn't in graph");
-            GraphTile tile = new GraphTile(0, 0)
+            leveldata = leveldatas[GameMaster.lvl];  // GameMaster begins at level 0
+            // Init map
+            foreach (MapDuoData maps in leveldata.subLevelList)
             {
-                TileGameObject = floormap.Find(obj => obj.position.x == 0 && obj.position.z == 0)
-            };
-            startTile = tile;
-            walkableGraph.Add(tile);
+                maps.InitMap();
+            }
+            map1 = leveldata.subLevelList[sublvl].map1;
+            map2 = leveldata.subLevelList[sublvl].map2;
         }
-
-        //GoalPoints
-        this.goalList = new List<Vector3>();
-        goalList.Add(new Vector3(7, 0, 7));
-        goalList.Add(new Vector3(0, 0, 7));
-        this.goal.transform.position = goalList[sublvl];
-
-        endTile = walkableGraph.Find(item => (item.x == goalList[sublvl].x) && (item.z == goalList[sublvl].z));
-        #endregion
-
-        // Get Neighbors for walkable tiles
-        foreach (GraphTile tempTile in walkableGraph)
+        
+        if (GameMaster.lvl != 3)
         {
-            GetNeighbors(walkableGraph, tempTile);
+            weightedGraph = new List<GraphTile>();
+            BuildGraph(leveldata.subLevelList[sublvl].arraylength, leveldata.subLevelList[sublvl].startPoint, leveldata.subLevelList[sublvl].goalPoint);
+            BuildWalls(leveldata.subLevelList[sublvl].arraylength);
         }
-        #endregion
-
-        // Remove unwalkable neighbors tile in walkable graph
-        foreach (GraphTile tempTile in obstacleGraph1)
-        {
-            RemoveUnwalkableTile(obstacleGraph2, tempTile);
-        }
-        foreach (GraphTile tempTile in obstacleGraph2)
-        {
-            RemoveUnwalkableTile(obstacleGraph1, tempTile);
-        }
+        else
+            BuildWalls(leveldata.subLevelList[sublvl].arraylength);
+        
 
         map1active = true;
         map2active = false;
-        map1.gameObject.SetActive(map1active);
-        map2.gameObject.SetActive(map2active);
+        map1Transform.gameObject.SetActive(map1active);
+        map2Transform.gameObject.SetActive(map2active);
         tilesMap = tilesMap1;
         mapSwap = true;
+    }
+
+    private void BuildGraph(int length, Vector3 start, Vector3 end)
+    {
+        debugText.text = "";
+        for (int i = 0; i < length; i++)
+        {
+            for (int j = 0; j < length; j++)
+            {
+                if (map1[i, j] == 1 && map2[i, j] == 1) // cannot go through tile at any case
+                {
+                    debugText.text += "X  ";
+                }
+                else if (map1[i, j] == 0 && map2[i, j] == 0) // always walkable without switching map
+                {
+                    debugText.text += "0  ";
+                    GraphTile tile = new GraphTile(i, j, 0);
+                    weightedGraph.Add(tile);
+                }
+                else if (map1[i, j] == 0 && map2[i, j] == 1)
+                {
+                    debugText.text += "1  ";
+                    GraphTile tile = new GraphTile(i, j, 1);
+                    weightedGraph.Add(tile);
+                }
+                else if (map1[i, j] == 1 && map2[i, j] == 0)
+                {
+                    debugText.text += "2  ";
+                    GraphTile tile = new GraphTile(i, j, 2);
+                    weightedGraph.Add(tile);
+                }
+                else
+                    Debug.LogWarning("Error case not understood");
+            }
+            debugText.text += "\n";
+        }
+
+        #region Set Start and end tiles
+        if (weightedGraph.Exists(item => (item.x == start.x) && (item.z == start.z))) // if startTile already exist in weightedGraph
+        {
+            startTile = weightedGraph.Find(item => (item.x == start.x) && (item.z == start.z));
+        }
+        else
+        {
+            Debug.LogWarning("Start tile isn't in graph");
+        }
+
+        if (weightedGraph.Exists(item => (item.x == end.x) && (item.z == end.z))) // if startTile already exist in weightedGraph
+        {
+            endTile = weightedGraph.Find(item => (item.x == end.x) && (item.z == end.z));
+        }
+        else
+        {
+            Debug.LogWarning("End tile isn't in graph");
+        }
+        #endregion
+
+        // Get Neighbors for walkable tiles
+        foreach (GraphTile tempTile in weightedGraph)
+        {
+            GetNeighbors(weightedGraph, tempTile);
+        }
+    }
+
+    private void BuildWalls(int length)
+    {
+        // Building walls and graphs // Need to separate graphs construction and wall construction
+        for (int i = 0; i < length; i++) // x values
+        {
+            for (int j = 0; j < length; j++) // z values
+            {
+                bool tiledAdded = false;
+                // Map 1
+                if (map1[i, j] == 1) // If we got a 1 => wall position in the map array
+                {
+                    // Instanciate wall objects for 1st map
+                    InstanciateWall(i, 0, j, tilesMap1, map1Transform);
+                }
+                else // its a walkable tile
+                {
+                    tiledAdded = true;
+                    CheckAndAddGraphTile(i, j);
+                }
+
+                // Map 2
+                if (map2[i, j] == 1)
+                {
+                    // Instanciate wall objects for 2d map
+                    InstanciateWall(i, -5.5f, j, tilesMap2, map2Transform);
+                }
+                else
+                {
+                    if (!tiledAdded)
+                        CheckAndAddGraphTile(i, j);
+                }
+            }
+        }
+    }
+
+    // DEPRECATED, used before but not very nice
+    private void BuildGraphWithWalls(int length)
+    {
+        // Building walls and graphs // Need to separate graphs construction and wall construction
+        for (int i = 0; i < length; i++) // x values
+        {
+            for (int j = 0; j < length; j++) // z values
+            {
+                bool tiledAdded = false;
+                // Map 1
+                if (map1[i, j] == 1) // If we got a 1 => wall position in the map array
+                {
+                    // Instanciate wall objects for 1st map
+                    InstanciateWall(i, 0, j, tilesMap1, map1Transform);
+                    GraphTile tile = new GraphTile(i, j);
+                    obstacleGraph1.Add(tile);
+                }
+                else // its a walkable tile
+                {
+                    tiledAdded = true;
+                    CheckAndAddGraphTile(i, j);
+                }
+
+                // Map 2
+                if (map2[i, j] == 1)
+                {
+                    // Instanciate wall objects for 2d map
+                    InstanciateWall(i, -5.5f, j, tilesMap2, map2Transform);
+                    GraphTile tile = new GraphTile(i, j);
+                    obstacleGraph2.Add(tile);
+                }
+                else
+                {
+                    if (!tiledAdded)
+                        CheckAndAddGraphTile(i, j);
+                }
+            }
+        }
     }
 
     // USED FOR TESTS
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.K))
-           ShortestPath();
+        {
+            ShortestPathOnWeightedGraph(true);
+            //ShowGraphTiles(obstacleGraph1, GroundColor.Red);
+        }
+
+        //ShowGraphTiles(obstacleGraph1, GroundColor.Red);
+        //ShowGraphTiles(obstacleGraph2, GroundColor.Yellow);
+
     }
 
     /// <summary>
@@ -359,11 +362,8 @@ public class MapManager : MonoBehaviour
             Animator animator = wallTile.GetComponent<Animator>();
             animator.SetTrigger("FadeOut");
             Transform floorTile = floormap.Find(tileFinding => (tileFinding.position.x == wallTile.position.x && tileFinding.position.z == wallTile.position.z));
-            if(floorTile != null)
-            {
-                floorTile.gameObject.SetActive(false);
-                floorMapToActivate.Add(floorTile);
-            }
+            floorTile.gameObject.SetActive(false);
+            floorMapToActivate.Add(floorTile);
         }
         yield return new WaitForSeconds(0.8f);
         #region WaitAndDo // this will be executed only when the coroutine have finished
@@ -422,8 +422,8 @@ public class MapManager : MonoBehaviour
         {
             tile.position += new Vector3(0, 9, 0);
         }
-        map1.gameObject.SetActive(map1active);
-        map2.gameObject.SetActive(map2active);
+        map1Transform.gameObject.SetActive(map1active);
+        map2Transform.gameObject.SetActive(map2active);
         yield return new WaitForSeconds(1f);
         #region WaitAndDo // this will be executed only when the coroutine have finished
         mapSwap = true;
@@ -450,6 +450,8 @@ public class MapManager : MonoBehaviour
         }
     }
 
+
+    // DEPRECATED, used before but not didnt work well
     /// <summary>
     /// Chack if a shortest path exists in the graph of walkable tile
     /// Applying A star without time calculation (breadth First search)
@@ -461,7 +463,7 @@ public class MapManager : MonoBehaviour
         List<GraphTile> openList = new List<GraphTile>(); // set of nodes to be evaluated
         List<GraphTile> closedList = new List<GraphTile>(); // set of nodes already evaluated
 
-        openList.Add((GraphTile)this.startTile);
+        openList.Add((GraphTile)startTile);
         while (openList.Count != 0) // while the list is not empty
         {
             GraphTile current = null;
@@ -469,7 +471,7 @@ public class MapManager : MonoBehaviour
             current = openList[0];
             if (current == null)
             {
-                Debug.Log("Error current GraphTile is null");
+                Debug.LogError("Error current GraphTile is null");
                 return false;
             }
 
@@ -477,7 +479,7 @@ public class MapManager : MonoBehaviour
 
             if (current == endTile) // Final path found
             {
-                Reconstruct_path(startTile, current);
+                Reconstruct_path(startTile, current, GroundColor.Green);
                 return true;
             }
 
@@ -515,11 +517,94 @@ public class MapManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Chack if a shortest path exists in the graph of walkable tile
+    /// Applying A star without time calculation (breadth First search)
+    /// </summary>
+    /// <returns>Return true if a path exists or false if not</returns>
+    /// 
+    // TODO : store solution instead of recalculate solution path
+    public bool ShortestPathOnWeightedGraph(bool showSolution)
+    {
+        // Since GraphTile is a structure it can't be directly null, so we transformed it to GraphTile? or Nullable<GraphTile>
+        List<GraphTile> openList = new List<GraphTile>(); // set of nodes to be evaluated
+        List<GraphTile> closedList = new List<GraphTile>(); // set of nodes already evaluated
+
+        openList.Add((GraphTile)startTile);
+        while (openList.Count != 0) // while the list is not empty
+        {
+            GraphTile current = null;
+
+            current = openList[0];
+            if (current == null)
+            {
+                Debug.LogError("Error current GraphTile is null");
+                return false;
+            }
+
+            openList.Remove(current);
+
+            if (current == endTile) // Final path found
+            {
+                if(showSolution)
+                    Reconstruct_path(startTile, current, GroundColor.Green);
+                return true;
+            }
+
+            List<GraphTile> neighbors = current.neighbors;
+            for (int i = 0; i < neighbors.Count; i++)
+            {
+                GraphTile neighbor = neighbors[i];
+                if (closedList.Contains(neighbor)) // if the node has already been 
+                {
+                    continue;
+                }
+
+                // float costToNeighbor = current.G + GetDistance(current, neighbor);
+                if (!openList.Contains(neighbor)) //costToNeighbor < neighbor.G || 
+                {
+                    // neighbor.G = costToNeighbor;
+                    // neighbor.H = GetDistance(neighbor, end);
+                    // neighbor.F = neighbor.G + neighbor.H;
+
+                    if (current.value == 1 && neighbor.value == 2 || current.value == 2 && neighbor.value == 1)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        neighbor.predecessor = current;
+
+                        if (!openList.Contains(neighbor))
+                        {
+                            openList.Add(neighbor);
+                        }
+                    }
+                }
+
+            }
+
+            if (!closedList.Contains(current))
+                closedList.Add(current);
+
+        }
+        return false;
+    }
+
+    public void ShowGraphTiles(List<GraphTile> graph, GroundColor color)
+    {
+        foreach (GraphTile tile in graph)
+        {
+            tile.ChangeColor(floormap, color);
+        }
+    }
+
+
+    /// <summary>
     /// Retrieve a list of node from start to end node to get the solution
     /// Also showing the answer in green
     /// </summary>
     /// <returns>Return true if a path exists or false if not</returns>
-    public void Reconstruct_path(GraphTile startNode, GraphTile endNode)
+    public void Reconstruct_path(GraphTile startNode, GraphTile endNode, GroundColor color)
     {
         List<GraphTile> solution = new List<GraphTile>();
         GraphTile node = endNode;
@@ -529,7 +614,7 @@ public class MapManager : MonoBehaviour
         {
             solution.Add(node);
             node = node.predecessor;
-            node.ChangeColor();
+            node.ChangeColor(floormap, color);
         }
         solution.Add(startNode);
         solution.Reverse();
@@ -599,6 +684,7 @@ public class MapManager : MonoBehaviour
                         GraphTile unwalkableNeighbor = walkableGraph.Find(item => (item.x == (wallNode.x + i)) && (item.z == wallNode.z));
                         walkableNode.neighbors.Remove(unwalkableNeighbor);
                     }
+
                     if (graph.Exists(item => (item.x == (wallNode.x)) && (item.z == wallNode.z + i))) // if an adjacent neighbor exists in the given graph
                     {
                         GraphTile unwalkableNeighbor = walkableGraph.Find(item => (item.x == wallNode.x) && (item.z == wallNode.z + i));
@@ -610,5 +696,55 @@ public class MapManager : MonoBehaviour
         }
         else
             Debug.Log("Walkable Graph is null");
+    }
+
+    /// <summary>
+    /// Get Neighbors for a node in a list of GraphTile
+    /// </summary>
+    /// <param name = graph > List of nodes (GraphTile).</param>
+    /// <param name = node > Node given to search neighbors .</param>
+    private bool CreateRandomGraph()
+    {
+        map1 = new int[8,8];
+        map2 = new int[8,8];
+
+        System.Random r = new System.Random(DateTime.Now.Millisecond);
+        System.Random r2 = new System.Random(DateTime.Now.Millisecond + 42);
+
+        int ite = 0;
+        int lenght = map1.GetLength(0);
+        while (ite < 1000)
+        {
+            weightedGraph = new List<GraphTile>();
+            for (int i = 0; i < lenght; i++)
+            {
+                for (int j = 0; j < lenght; j++)
+                {
+                    int rInt = r.Next(0, 2);  //Return a random float number between min [inclusive] and max [exclusive]
+                                              //int value = (new UnityEngine.Random.Range(0, 1) > 0.5f) ? 0 : 1;
+                    map1[i, j] = rInt;
+
+                    rInt = r2.Next(0, 2);  //Return a random float number between min [inclusive] and max [exclusive]
+                    map2[i, j] = rInt;
+                }
+            }
+
+            map1[0, 0] = 0;
+            map2[0, 0] = 0;
+            map2[lenght-1, lenght-1] = 0;
+
+            weightedGraph = new List<GraphTile>();
+            BuildGraph(lenght, new Vector3(0,0,0), new Vector3(lenght-1, 0, lenght-1));
+
+            if (ShortestPathOnWeightedGraph(false) == true)
+            {
+                return true;
+            }
+            else
+            {
+                ite++;
+            }
+        }
+        return false;
     }
 }

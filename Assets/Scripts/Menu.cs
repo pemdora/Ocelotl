@@ -33,8 +33,8 @@ public class Menu : MonoBehaviour {
 
     public void PlayLevel(int index) // index of level, start at 1
     {
-        Debug.Log(index);
-        GameMaster.lvl = index-1; // 1st level is tutorial we don't want to count it as a level
+        GameMaster.lvl = index - 1; // 1st level is tutorial we don't want to count it as a level
+        MapManager.sublvl = 0;
         SceneManager.LoadScene(index);
         AudioManager.audioManagerInstance.SelectAudio("TEMP Daniel_Birch_-_02_-_Deep_In_Peace");
         AudioManager.audioManagerInstance.PlaySelectedAudio(true); // looping = true
