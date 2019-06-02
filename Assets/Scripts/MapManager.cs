@@ -13,6 +13,8 @@ public class MapManager : MonoBehaviour
     // DEBUG
     [SerializeField]
     private Text debugText;
+    [SerializeField]
+    private Animator panelLevelGenFailed;
 
     [Header("Maps variables")]
     private List<Transform> tilesMap; // Active map
@@ -94,7 +96,10 @@ public class MapManager : MonoBehaviour
 
         if (GameMaster.lvl == 2) // Random generation
         {
-            Debug.Log(CreateRandomGraph());
+            if (!CreateRandomGraph())
+            {
+                panelLevelGenFailed.SetTrigger("Failed");
+            }
         }
         else
         {
@@ -758,7 +763,7 @@ public class MapManager : MonoBehaviour
 
         int ite = 0;
         int lenght = map1.GetLength(0);
-        while (ite < 200)
+        while (ite < 1000)
         {
             weightedGraph = new List<GraphTile>();
             for (int i = 0; i < lenght; i++)

@@ -80,6 +80,11 @@ public class GameMaster : MonoBehaviour {
         GameMaster.retry = true; // Tell the class that we have retried (so the next scene can display retry UI)
     }
 
+    public void ReLoadRandomGeneration()
+    {
+        SceneManager.LoadScene(3); // Reload lvl
+    }
+
     /// <summary>
     /// Function called when user swaps maps
     /// </summary>
