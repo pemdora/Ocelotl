@@ -103,7 +103,6 @@ public class MapManager : MonoBehaviour
         }
         else
         {
-            Debug.Log(GameMaster.lvl);
             leveldata = leveldatas[GameMaster.lvl];  // GameMaster begins at level 0
             // Init map
             foreach (MapDuoData maps in leveldata.subLevelList)
@@ -113,67 +112,16 @@ public class MapManager : MonoBehaviour
             map1 = leveldata.subLevelList[sublvl].map1;
             map2 = leveldata.subLevelList[sublvl].map2;
         }
-
-        // Build graph from array
-        if (GameMaster.lvl != 0 && GameMaster.lvl != 3)
+        
+        if (GameMaster.lvl != 3)
         {
-            BuildGraphWithWalls(leveldata.subLevelList[sublvl].arraylength);
+            weightedGraph = new List<GraphTile>();
+            BuildGraph(leveldata.subLevelList[sublvl].arraylength, leveldata.subLevelList[sublvl].startPoint, leveldata.subLevelList[sublvl].goalPoint);
+            BuildWalls(leveldata.subLevelList[sublvl].arraylength);
         }
         else
-        {
-            if (GameMaster.lvl != 3)
-            {
-                weightedGraph = new List<GraphTile>();
-                BuildGraph(leveldata.subLevelList[sublvl].arraylength, leveldata.subLevelList[sublvl].startPoint, leveldata.subLevelList[sublvl].goalPoint);
-                BuildWalls(leveldata.subLevelList[sublvl].arraylength);
-            }
-            else
-                BuildWalls(8);
-        }
-
-        if (GameMaster.lvl != 3 && GameMaster.lvl != 0)
-        {
-            #region Fetching start and goal points and send it to graph
-            Vector3 start = leveldata.subLevelList[sublvl].startPoint;
-
-            if (walkableGraph.Exists(item => (item.x == start.x) && (item.z == start.z))) // if startTile already exist in walkableGraph
-            {
-                startTile = walkableGraph.Find(item => (item.x == start.x) && (item.z == start.z));
-            }
-            else
-            {
-                Debug.Log("Start tile wasn't in graph");
-                GraphTile tile = new GraphTile(0, 0)
-                {
-                    TileGameObject = floormap.Find(obj => obj.position.x == 0 && obj.position.z == 0)
-                };
-                startTile = tile;
-                walkableGraph.Add(tile);
-            }
-
-            //GoalPoints
-            Vector3 end = leveldata.subLevelList[sublvl].goalPoint;
-            goal.position = end;
-
-            endTile = walkableGraph.Find(item => (item.x == end.x) && (item.z == end.z));
-            #endregion
-
-            // Get Neighbors for walkable tiles
-            foreach (GraphTile tempTile in walkableGraph)
-            {
-                GetNeighbors(walkableGraph, tempTile);
-            }
-
-            // Remove unwalkable neighbors tile in walkable graph
-            foreach (GraphTile tempTile in obstacleGraph1)
-            {
-                RemoveUnwalkableTile(obstacleGraph2, tempTile);
-            }
-            foreach (GraphTile tempTile in obstacleGraph2)
-            {
-                RemoveUnwalkableTile(obstacleGraph1, tempTile);
-            }
-        }
+            BuildWalls(leveldata.subLevelList[sublvl].arraylength);
+        
 
         map1active = true;
         map2active = false;
@@ -280,6 +228,7 @@ public class MapManager : MonoBehaviour
         }
     }
 
+    // DEPRECATED, used before but not very nice
     private void BuildGraphWithWalls(int length)
     {
         // Building walls and graphs // Need to separate graphs construction and wall construction
@@ -324,11 +273,7 @@ public class MapManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.K))
         {
-            ShortestPath();
-        }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            ShortestPathOnWeightedGraph();
+            ShortestPathOnWeightedGraph(true);
             //ShowGraphTiles(obstacleGraph1, GroundColor.Red);
         }
 
@@ -505,6 +450,8 @@ public class MapManager : MonoBehaviour
         }
     }
 
+
+    // DEPRECATED, used before but not didnt work well
     /// <summary>
     /// Chack if a shortest path exists in the graph of walkable tile
     /// Applying A star without time calculation (breadth First search)
@@ -574,7 +521,9 @@ public class MapManager : MonoBehaviour
     /// Applying A star without time calculation (breadth First search)
     /// </summary>
     /// <returns>Return true if a path exists or false if not</returns>
-    public bool ShortestPathOnWeightedGraph()
+    /// 
+    // TODO : store solution instead of recalculate solution path
+    public bool ShortestPathOnWeightedGraph(bool showSolution)
     {
         // Since GraphTile is a structure it can't be directly null, so we transformed it to GraphTile? or Nullable<GraphTile>
         List<GraphTile> openList = new List<GraphTile>(); // set of nodes to be evaluated
@@ -596,7 +545,8 @@ public class MapManager : MonoBehaviour
 
             if (current == endTile) // Final path found
             {
-                Reconstruct_path(startTile, current, GroundColor.Green);
+                if(showSolution)
+                    Reconstruct_path(startTile, current, GroundColor.Green);
                 return true;
             }
 
@@ -658,10 +608,18 @@ public class MapManager : MonoBehaviour
     {
         List<GraphTile> solution = new List<GraphTile>();
         GraphTile node = endNode;
+        int numberOfSwap = 0;
+        int currentNodeWeight = 1;
 
         // We will reconstruct the path from the end
         while (node != startNode && node.predecessor != null) //node.Predecessor != null
         {
+            if (node.value != 0 && currentNodeWeight != node.value)
+            {
+                currentNodeWeight = node.value;
+                numberOfSwap++;
+            }
+
             solution.Add(node);
             node = node.predecessor;
             node.ChangeColor(floormap, color);
@@ -786,7 +744,7 @@ public class MapManager : MonoBehaviour
             weightedGraph = new List<GraphTile>();
             BuildGraph(lenght, new Vector3(0,0,0), new Vector3(lenght-1, 0, lenght-1));
 
-            if (ShortestPathOnWeightedGraph() == true)
+            if (ShortestPathOnWeightedGraph(false) == true)
             {
                 return true;
             }

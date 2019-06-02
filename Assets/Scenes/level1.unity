@@ -393,11 +393,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 14
   m_CollisionDetection: 0
---- !u!1 &510910302 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1126989914323276, guid: 2c8b65a0ad5742844a6b1aacb5b167d4,
-    type: 2}
-  m_PrefabInternal: {fileID: 641305771}
 --- !u!1 &517597738 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1311570178328128, guid: 2c8b65a0ad5742844a6b1aacb5b167d4,
@@ -639,9 +634,28 @@ Prefab:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1307697366601986, guid: 2c8b65a0ad5742844a6b1aacb5b167d4, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224934884434776908, guid: 2c8b65a0ad5742844a6b1aacb5b167d4,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: -118.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224934884434776908, guid: 2c8b65a0ad5742844a6b1aacb5b167d4,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: -153.1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2c8b65a0ad5742844a6b1aacb5b167d4, type: 2}
   m_IsPrefabParent: 0
+--- !u!95 &641305772 stripped
+Animator:
+  m_PrefabParentObject: {fileID: 95654794697085870, guid: 2c8b65a0ad5742844a6b1aacb5b167d4,
+    type: 2}
+  m_PrefabInternal: {fileID: 641305771}
 --- !u!1 &738054518
 GameObject:
   m_ObjectHideFlags: 0
@@ -6074,7 +6088,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ba283c2e29f082429e9c0295ccf5536, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  retryUI: {fileID: 510910302}
+  retryUI: {fileID: 641305772}
   finishUI: {fileID: 1242305755}
   imgLvl:
   - {fileID: 27647554}
