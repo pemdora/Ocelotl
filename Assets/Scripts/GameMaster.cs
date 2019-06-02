@@ -11,7 +11,7 @@ using System.Collections.Generic;
 public class GameMaster : MonoBehaviour {
 
     public const int MAXSUBLVL = 2;
-    public static int lvl = 99;
+    public static int lvl = 0;
 
     [Header("UI Elements variables")]
     public GameObject retryUI;
@@ -104,10 +104,11 @@ public class GameMaster : MonoBehaviour {
         float time = Mathf.Floor(Time.time - elapsedTime);
         timeFinish.text = time.ToString();
         // Send Highscore from level 1
-        if(lvl>0)
+        if(lvl>0 && lvl != 2)
             Highscores.highscoreManager.AddNewHighscore(Menu.playerName, lvl + MapManager.sublvl, (int)time); // MapManager.sublvl begins at 0
+
         MapManager.sublvl++;
-        if (MapManager.sublvl != MAXSUBLVL && lvl != 0)
+        if (MapManager.sublvl != MAXSUBLVL && lvl != 0 && lvl != 2)
         {
             IEnumerator coroutine = WaitAndLoadScene();
             StartCoroutine(coroutine);

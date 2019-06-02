@@ -11,8 +11,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a9733c9dfbc34a4ea5d67e2c86af82f, type: 3}
   m_Name: Maps TEST
   m_EditorClassIdentifier: 
-  arraylength: 3
-  level: 666
+  arraylength: 8
+  level: 2
   submapLevel: 0
   startPoint: {x: 0, y: 0, z: 0}
-  goalPoint: {x: 2, y: 0, z: 2}
+  goalPoint: {x: 7, y: 0, z: 7}

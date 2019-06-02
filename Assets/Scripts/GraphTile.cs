@@ -63,7 +63,6 @@ public class GraphTile
             Transform tile = floormap.Find(obj => obj.position.x == x && obj.position.z == z );
             if (tile != null)
             {
-                Debug.Log("node : " + x + " " + z + " "+tile.gameObject.name);
                 tileGameObject = tile;
                 Animator animator = this.tileGameObject.GetComponent<Animator>();
                 animator.SetTrigger(color.ToString());

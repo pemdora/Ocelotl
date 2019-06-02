@@ -92,12 +92,13 @@ public class MapManager : MonoBehaviour
         
         LevelData leveldata = leveldatas[0];  // GameMaster begins at level 0
 
-        if (GameMaster.lvl == 99) // Random generation
+        if (GameMaster.lvl == 2) // Random generation
         {
             Debug.Log(CreateRandomGraph());
         }
         else
         {
+            Debug.Log(GameMaster.lvl);
             leveldata = leveldatas[GameMaster.lvl];  // GameMaster begins at level 0
             // Init map
             foreach (MapDuoData maps in leveldata.subLevelList)
@@ -109,13 +110,13 @@ public class MapManager : MonoBehaviour
         }
 
         // Build graph from array
-        if (GameMaster.lvl != 0 && GameMaster.lvl != 99)
+        if (GameMaster.lvl != 0 && GameMaster.lvl != 3)
         {
             BuildGraphWithWalls(leveldata.subLevelList[sublvl].arraylength);
         }
         else
         {
-            if (GameMaster.lvl != 99)
+            if (GameMaster.lvl != 3)
             {
                 weightedGraph = new List<GraphTile>();
                 BuildGraph(leveldata.subLevelList[sublvl].arraylength, leveldata.subLevelList[sublvl].startPoint, leveldata.subLevelList[sublvl].goalPoint);
@@ -125,7 +126,7 @@ public class MapManager : MonoBehaviour
                 BuildWalls(8);
         }
 
-        if (GameMaster.lvl != 99 && GameMaster.lvl != 0)
+        if (GameMaster.lvl != 3 && GameMaster.lvl != 0)
         {
             #region Fetching start and goal points and send it to graph
             Vector3 start = leveldata.subLevelList[sublvl].startPoint;
@@ -186,23 +187,23 @@ public class MapManager : MonoBehaviour
             {
                 if (map1[i, j] == 1 && map2[i, j] == 1) // cannot go through tile at any case
                 {
-                    debugText.text += "X ";
+                    debugText.text += "X  ";
                 }
                 else if (map1[i, j] == 0 && map2[i, j] == 0) // always walkable without switching map
                 {
-                    debugText.text += "0 ";
+                    debugText.text += "0  ";
                     GraphTile tile = new GraphTile(i, j, 0);
                     weightedGraph.Add(tile);
                 }
                 else if (map1[i, j] == 0 && map2[i, j] == 1)
                 {
-                    debugText.text += "1 ";
+                    debugText.text += "1  ";
                     GraphTile tile = new GraphTile(i, j, 1);
                     weightedGraph.Add(tile);
                 }
                 else if (map1[i, j] == 1 && map2[i, j] == 0)
                 {
-                    debugText.text += "2 ";
+                    debugText.text += "2  ";
                     GraphTile tile = new GraphTile(i, j, 2);
                     weightedGraph.Add(tile);
                 }
@@ -782,16 +783,10 @@ public class MapManager : MonoBehaviour
 
             if (ShortestPathOnWeightedGraph() == true)
             {
-                foreach (GraphTile tempTile in weightedGraph)
-                {
-                    Debug.Log(tempTile.value);
-                }
-
                 return true;
             }
             else
             {
-                Debug.Log("+");
                 ite++;
             }
         }
