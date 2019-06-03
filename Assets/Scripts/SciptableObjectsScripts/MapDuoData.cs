@@ -102,28 +102,30 @@ public class MapDuoData : ScriptableObject
                 }
                 break;
             case 666:
-                map1 = new int[4, 4] { // map of 8 line and 8 colums
-                    { 0, 0, 0, 0},
-                    { 1, 1, 1, 1},
-                    { 0, 0, 0, 0},
-                    { 0, 0, 0, 0}
-                };
-                map2 = new int[4, 4] { // map of 8 line and 8 colums
-                    { 0, 0, 0, 0},
-                    { 1, 0, 1, 1},
-                    { 0, 0, 1, 0},
-                    { 0, 0, 1, 0}
-                };
-                //map1 = new int[3, 3] { // map of 8 line and 8 colums
-                //    { 0, 0, 0 },
-                //    { 1, 1, 1 },
-                //    { 0, 0, 0 }
+                //map1 = new int[4, 4] { // map of 8 line and 8 colums
+                //    { 0, 0, 0, 0},
+                //    { 1, 1, 1, 1},
+                //    { 0, 0, 0, 0},
+                //    { 0, 0, 0, 0}
                 //};
-                //map2 = new int[3, 3] { // map of 8 line and 8 colums
-                //    { 0, 0, 0 },
-                //    { 0, 1, 1 },
-                //    { 0, 1, 0 }
+                //map2 = new int[4, 4] { // map of 8 line and 8 colums
+                //    { 0, 0, 0, 0},
+                //    { 1, 0, 1, 1},
+                //    { 0, 0, 1, 0},
+                //    { 0, 0, 1, 0}
                 //};
+                startPoint = new Vector3(0, 0, 0);
+                goalPoint = new Vector3(3, 0, 3);
+                map1 = new int[3, 3] { // map of 8 line and 8 colums
+                    { 0, 0, 0 },
+                    { 1, 1, 1 },
+                    { 0, 0, 0 }
+                };
+                map2 = new int[3, 3] { // map of 8 line and 8 colums
+                    { 0, 0, 0 },
+                    { 0, 1, 1 },
+                    { 0, 1, 0 }
+                };
                 break;
         }
     }

@@ -1,0 +1,23 @@
+Level generation.
+
+A level is composed of 2 maps (8x8 tiles), got a start point and end point.
+
+1 tile is either empty or a wall (bloc).
+
+Graph construction - Example on a 3x3 map
+
+Each map is loaded from an array of int.
+
+( img : map1 bloc )
+
+( img : map explanation )
+
+Start and end point is chosen here 
+
+( img : map explanation + star end )
+
+Calculate new weight
+
+(explanation)
+
+case of impossible maps
